@@ -58,7 +58,7 @@ export default function About() {
             </p>
 
             <p className="text-slate-400 leading-relaxed text-[15px]">
-              My engineering background (B.E. Mechanical, Mumbai University) gives me a strong analytical
+              My engineering background (Bachelor of Science in Information Technology, Mumbai University) gives me a strong analytical
               foundation — now supercharged with modern data tools and cloud technologies.
             </p>
 
