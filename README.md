@@ -32,6 +32,7 @@ npm run dev
 iqram-portfolio/
 ├── app/
 │   ├── globals.css       # Global styles + Tailwind
+│   ├── icon.png
 │   ├── layout.tsx        # Root layout
 │   └── page.tsx          # Main page (assembles sections)
 ├── components/
@@ -45,6 +46,8 @@ iqram-portfolio/
 │   └── Footer.tsx
 ├── hooks/
 │   └── useInView.ts      # IntersectionObserver for scroll animations
+├── public/
+│   └── img.jpg
 ├── tailwind.config.js
 ├── next.config.js
 └── tsconfig.json
