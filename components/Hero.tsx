@@ -119,13 +119,13 @@ export default function Hero() {
             >
               View Projects
             </a>
-            <a
+            {/* <a
               href="#"
               className="px-6 py-3 bg-[#0F1629] border border-[#1E2D4A] text-slate-200 font-semibold rounded-xl hover:border-[#00C9B1]/50 transition-all hover:-translate-y-0.5 text-sm flex items-center gap-2"
             >
               <HiDownload size={16} />
               Download CV
-            </a>
+            </a> */}
           </div>
 
           {/* socials */}
