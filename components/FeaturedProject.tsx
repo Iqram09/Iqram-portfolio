@@ -92,7 +92,7 @@ export default function FeaturedProject() {
                   </div>
                   <div className="flex gap-4">
                     <span className="text-border">5</span>
-                    <span><span className="text-border">/*</span></span>
+                    <span><span className="text-border">{"/*"}</span></span>
                   </div>
                   <div className="flex gap-4 animate-pulse-slow">
                     <span className="text-border">6</span>
@@ -100,7 +100,7 @@ export default function FeaturedProject() {
                   </div>
                   <div className="flex gap-4">
                     <span className="text-border">7</span>
-                    <span className="text-border">*/</span>
+                    <span className="text-border">{"*/"}</span>
                   </div>
                 </div>
               </div>
