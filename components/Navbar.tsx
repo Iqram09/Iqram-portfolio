@@ -1,107 +1,154 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { LuMenu, LuX } from "react-icons/lu";
+import { usePathname } from "next/navigation";
+import { navLinks, site } from "@/data/site";
+import { Menu, Close } from "@/components/ui/Icons";
+
+const SECTION_IDS = ["work", "experience", "about", "contact"] as const;
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
-    { name: "Work", href: "#work" },
-    { name: "Experience", href: "#experience" },
-    { name: "About", href: "#about" },
-    { name: "Contact", href: "#contact" },
-  ];
+  // Active-section indicator (home only).
+  useEffect(() => {
+    if (!isHome || typeof IntersectionObserver === "undefined") return;
+    const els = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
+    if (els.length === 0) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.1, 0.25] }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [isHome]);
+
+  // Close the mobile menu on route change / escape.
+  useEffect(() => setOpen(false), [pathname]);
+  const onKey = useCallback((e: KeyboardEvent) => {
+    if (e.key === "Escape") setOpen(false);
+  }, []);
+  useEffect(() => {
+    if (!open) return;
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onKey]);
+
+  const isActive = (id: string) => {
+    if (id === "resume") return pathname === "/resume";
+    return isHome && active === id;
+  };
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-primary/80 backdrop-blur-md border-b border-border py-4"
-          : "bg-transparent py-6"
+      className={`fixed inset-x-0 top-0 z-50 transition-[height,background-color,border-color,backdrop-filter] duration-300 ${
+        scrolled
+          ? "border-b border-line bg-bg/80 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70"
+          : "border-b border-transparent bg-transparent"
       }`}
+      style={{ height: scrolled ? 56 : 64 }}
     >
-      <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <div className="flex items-center gap-6">
+      <nav className="container-site flex h-full items-center justify-between" aria-label="Primary">
+        <div className="flex items-center gap-4">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-bright hover:text-accent transition-colors"
+            className="font-semibold tracking-[0.18em] text-fg transition-colors hover:text-accent"
+            aria-label={`${site.displayName} — home`}
           >
-            IQRAM.
+            {site.shortName}
           </Link>
-          <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-surface rounded-full border border-border text-xs font-mono text-muted">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse-slow"></span>
-            Open to opportunities
-          </div>
+          <span className="hidden items-center gap-2 rounded-full border border-line bg-bg-2/70 px-2.5 py-1 font-mono text-[11px] text-fg-muted sm:inline-flex">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-ok opacity-60 node-pulse" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ok" />
+            </span>
+            {site.status}
+          </span>
         </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="text-sm font-medium text-muted hover:text-bright transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Link
-            href="/resume"
-            className="text-sm font-medium text-accent hover:text-bright transition-colors"
-          >
-            Resume
-          </Link>
-        </nav>
+        {/* Desktop */}
+        <ul className="hidden items-center gap-1 md:flex">
+          {navLinks.map((l) => {
+            const on = isActive(l.id);
+            return (
+              <li key={l.id}>
+                <Link
+                  href={l.href}
+                  aria-current={on ? "true" : undefined}
+                  className={`relative rounded-md px-3 py-2 text-sm transition-colors ${
+                    on ? "text-fg" : "text-fg-muted hover:text-fg"
+                  }`}
+                >
+                  {l.label}
+                  <span
+                    aria-hidden
+                    className={`absolute inset-x-3 -bottom-px h-px bg-accent transition-opacity ${
+                      on ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
 
-        {/* Mobile Menu Toggle */}
+        {/* Mobile toggle */}
         <button
-          className="md:hidden text-muted hover:text-bright"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle Menu"
+          type="button"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-fg-muted hover:text-fg md:hidden"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
         >
-          {isMobileMenuOpen ? <LuX size={24} /> : <LuMenu size={24} />}
+          {open ? <Close size={18} /> : <Menu size={18} />}
         </button>
-      </div>
+      </nav>
 
-      {/* Mobile Nav */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-secondary border-b border-border shadow-xl">
-          <nav className="flex flex-col py-4 px-6 gap-4">
-            <div className="flex items-center gap-2 mb-2 px-3 py-2 bg-surface rounded-lg border border-border text-xs font-mono text-muted w-max">
-              <span className="w-2 h-2 rounded-full bg-accent animate-pulse-slow"></span>
-              Open to opportunities
-            </div>
-            {navLinks.map((link) => (
+      {/* Mobile panel */}
+      <div
+        id="mobile-nav"
+        hidden={!open}
+        className="border-b border-line bg-bg/95 backdrop-blur-md md:hidden"
+      >
+        <ul className="container-site flex flex-col py-3">
+          {navLinks.map((l) => (
+            <li key={l.id}>
               <Link
-                key={link.name}
-                href={link.href}
-                className="text-base font-medium text-muted hover:text-bright transition-colors py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                aria-current={isActive(l.id) ? "true" : undefined}
+                className={`block rounded-md px-2 py-3 text-base ${
+                  isActive(l.id) ? "text-fg" : "text-fg-muted"
+                }`}
               >
-                {link.name}
+                {l.label}
               </Link>
-            ))}
-            <Link
-              href="/resume"
-              className="text-base font-medium text-accent py-2"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Resume
-            </Link>
-          </nav>
-        </div>
-      )}
+            </li>
+          ))}
+          <li className="mt-2 border-t border-line pt-3 font-mono text-[11px] text-fg-dim sm:hidden">
+            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ok align-middle" />
+            {site.status}
+          </li>
+        </ul>
+      </div>
     </header>
   );
 }

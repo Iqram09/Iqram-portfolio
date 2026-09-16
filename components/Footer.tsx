@@ -1,52 +1,44 @@
 import Link from "next/link";
-import { LuGithub, LuLinkedin, LuMail } from "react-icons/lu";
+import { site } from "@/data/site";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-primary py-12 mt-24">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
-          <div>
-            <h3 className="text-lg font-semibold text-bright mb-1">
-              Iqram Patel
-            </h3>
-            <p className="text-muted text-sm mb-1">AI / Software Engineer</p>
-            <p className="text-muted/70 text-sm">Mumbai, India</p>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <a
-              href="https://github.com/Iqram09"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted hover:text-bright transition-colors"
-              aria-label="GitHub"
-            >
-              <LuGithub size={20} />
-            </a>
-            <a
-              href="https://www.linkedin.com/in/iqram-patel09/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted hover:text-bright transition-colors"
-              aria-label="LinkedIn"
-            >
-              <LuLinkedin size={20} />
-            </a>
-            <a
-              href="mailto:mdipramp@gmail.com"
-              className="text-muted hover:text-bright transition-colors"
-              aria-label="Email"
-            >
-              <LuMail size={20} />
-            </a>
-          </div>
+    <footer className="border-t border-line py-10">
+      <div className="container-site flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm font-medium text-fg">{site.displayName}</p>
+          <p className="mt-0.5 text-sm text-fg-muted">{site.role}</p>
+          <p className="mt-0.5 font-mono text-xs text-fg-dim">{site.location}</p>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-muted/70 font-mono">
-          <p>© {new Date().getFullYear()} Iqram Patel</p>
-          <p>Built with Next.js & Tailwind CSS</p>
-        </div>
+        <nav aria-label="Footer">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <li>
+              <a href={site.github} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${site.email}`} className="text-fg-muted transition-colors hover:text-fg">
+                Email
+              </a>
+            </li>
+            <li>
+              <Link href="/resume" className="text-fg-muted transition-colors hover:text-fg">
+                Resume
+              </Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div className="container-site mt-8 flex flex-col gap-2 border-t border-line pt-6 font-mono text-[11px] text-fg-dim sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2026 {site.displayName}</p>
+        <p>Next.js · TypeScript · Tailwind CSS</p>
       </div>
     </footer>
   );

@@ -1,283 +1,435 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { LuArrowLeft, LuExternalLink, LuShieldCheck, LuDatabase, LuFileCode, LuTerminal } from "react-icons/lu";
+import type { ReactNode } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Button from "@/components/ui/Button";
+import Motif from "@/components/ui/Motif";
+import Window from "@/components/ui/Window";
+import Reveal from "@/components/ui/Reveal";
+import AgentConsole from "@/components/AgentConsole";
+import CaseStudyNav from "@/components/case-study/CaseStudyNav";
+import ArchitectureDiagram from "@/components/case-study/ArchitectureDiagram";
+import ToolCatalog from "@/components/case-study/ToolCatalog";
+import CompressionChart from "@/components/case-study/CompressionChart";
+import SafetyChain from "@/components/case-study/SafetyChain";
+import TelemetryPanel from "@/components/case-study/TelemetryPanel";
+import EvaluationDashboard from "@/components/case-study/EvaluationDashboard";
+import FailureModeGrid from "@/components/case-study/FailureModeGrid";
+import TestMetrics from "@/components/case-study/TestMetrics";
+import { caseSections } from "@/components/case-study/sections";
+import { kong, headlineMetrics, topology, demoRun, limitations, kongImages } from "@/data/kong";
+import { site } from "@/data/site";
+import { ArrowLeft, ArrowUpRight, Github } from "@/components/ui/Icons";
+
+export const metadata: Metadata = {
+  title: kong.title,
+  description:
+    "Case study: an MCP server with 14 read-only tools, a deterministic diagnostic engine, a bounded agent loop and a 28-case evaluation harness for Kong Gateway 3.9.3.",
+  openGraph: {
+    title: `${kong.title} — ${site.displayName}`,
+    description:
+      "MCP server · agentic diagnostics · LLM evaluation. 14 tools, 170 tests, 28 evaluation cases, 100% finding recall in run-003.",
+    images: [{ url: "/og.png", width: 1200, height: 630 }],
+  },
+};
+
+const S = Object.fromEntries(caseSections.map((s) => [s.id, s])) as Record<
+  (typeof caseSections)[number]["id"],
+  (typeof caseSections)[number]
+>;
+
+function CaseSection({
+  id,
+  title,
+  lede,
+  children,
+  wide = false,
+}: {
+  id: keyof typeof S;
+  title?: string;
+  lede?: ReactNode;
+  children: ReactNode;
+  wide?: boolean;
+}) {
+  const s = S[id];
+  return (
+    <section id={s.id} className="scroll-mt-24 border-t border-line py-14 md:py-20" aria-labelledby={`${s.id}-title`}>
+      <Reveal>
+        <div className="flex items-center gap-3">
+          <span className="section-index">{s.n}</span>
+          <span className="h-px w-6 bg-line-strong" aria-hidden />
+          <span className="label-mono">{s.title}</span>
+        </div>
+        <h2 id={`${s.id}-title`} className="mt-4 text-balance text-2xl font-semibold tracking-tight text-fg md:text-3xl">
+          {title ?? s.title}
+        </h2>
+        {lede && <div className={`mt-4 text-pretty text-[15px] leading-relaxed text-fg-muted md:text-base ${wide ? "" : "max-w-prose"}`}>{lede}</div>}
+      </Reveal>
+      <Reveal delay={80} className="mt-8 md:mt-10">
+        {children}
+      </Reveal>
+    </section>
+  );
+}
 
 export default function KongCaseStudy() {
   return (
     <>
       <Navbar />
-      <main className="flex-1 flex flex-col pt-24 bg-primary text-bright selection:bg-accent/30 font-sans">
-        
-        {/* Header Section */}
-        <section className="py-20 border-b border-border bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/5 via-primary to-primary">
-          <div className="max-w-4xl mx-auto px-6">
-            <Link href="/" className="inline-flex items-center gap-2 text-muted hover:text-bright transition-colors mb-8 font-mono text-sm">
-              <LuArrowLeft size={16} /> Back to portfolio
+      <main id="main" className="flex-1">
+        {/* Header */}
+        <header className="relative overflow-hidden border-b border-line pt-[calc(var(--nav-h)+40px)] pb-12 md:pt-[calc(var(--nav-h)+64px)] md:pb-16">
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_20%_0%,rgba(56,189,248,0.10),transparent_70%)]" />
+          <div className="container-site relative">
+            <Link href="/#work" className="inline-flex items-center gap-2 font-mono text-xs text-fg-muted transition-colors hover:text-fg">
+              <ArrowLeft size={14} /> Back to portfolio
             </Link>
-            
-            <div className="flex flex-wrap gap-2 mb-6">
-              <span className="px-3 py-1 bg-surface border border-border rounded text-xs font-mono text-accent">MCP Server</span>
-              <span className="px-3 py-1 bg-surface border border-border rounded text-xs font-mono text-accent">Agentic Diagnostics</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">Kong AI Gateway Diagnostics</h1>
-            <p className="text-xl text-muted leading-relaxed mb-8">
-              A read-only MCP-based AI agent that investigates Kong Gateway configuration through bounded tools, deterministic diagnostics, context management, evaluation and observability.
-            </p>
-            
-            <div className="flex items-center gap-4">
-              <a
-                href="https://github.com/Iqram09/kong-ai-gateway-diagnostics"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-surface text-bright border border-border rounded-lg hover:border-accent/50 transition-colors"
-              >
-                View Repository <LuExternalLink size={18} />
-              </a>
-            </div>
-          </div>
-        </section>
 
-        {/* Overview Section */}
-        <section className="py-20 border-b border-border">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-2xl font-bold mb-8">Overview</h2>
-            <div className="grid md:grid-cols-2 gap-12">
-              <div>
-                <h3 className="text-lg font-bold text-accent mb-3">The Problem</h3>
-                <p className="text-muted leading-relaxed">
-                  Debugging an API gateway involves many narrow questions across routes, services, plugins, consumers, and upstream health. Hunting down a configuration error across these interconnected entities is highly manual.
+            <div className="mt-8 grid gap-10 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-8">
+                <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
+                  <span className="rounded border border-line bg-bg-2 px-2 py-1 text-fg-muted">case study</span>
+                  <span className="rounded border border-line bg-bg-2 px-2 py-1 text-fg-muted">reference implementation</span>
+                  <span className="rounded border border-line bg-bg-2 px-2 py-1 text-fg-dim">captured {kong.capturedOn}</span>
+                </div>
+                <h1 className="mt-6 text-balance text-4xl font-semibold tracking-tightest text-fg sm:text-5xl md:text-6xl">
+                  {kong.title}
+                </h1>
+                <p className="mt-4 font-mono text-sm text-accent">{kong.subtitle}</p>
+                <p className="mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-fg-muted">
+                  An MCP server that lets an LLM agent investigate a Kong Gateway through fourteen read-only, bounded,
+                  schema-validated tools — with a deterministic diagnostic engine producing the facts, a bounded agent
+                  loop producing the explanation, and an evaluation harness measuring whether it works.
                 </p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Button href={kong.repo} external>
+                    <Github size={16} /> View repository
+                  </Button>
+                  <Button href="#agent" variant="secondary">
+                    Watch the agent run
+                  </Button>
+                  <Motif className="ml-1" />
+                </div>
               </div>
-              <div>
-                <h3 className="text-lg font-bold text-accent mb-3">The Solution</h3>
-                <p className="text-muted leading-relaxed">
-                  Allow an LLM to investigate using structured MCP tools while keeping infrastructure facts deterministic and authoritative.
+
+              <div className="lg:col-span-4">
+                <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line">
+                  {headlineMetrics.map((m) => (
+                    <div key={m.label} className="bg-bg-1 p-4">
+                      <dd className="font-mono text-2xl tabular-nums text-fg">
+                        {m.value}
+                        {m.suffix}
+                      </dd>
+                      <dt className="mt-1 text-[12px] text-fg-muted">{m.label}</dt>
+                      <dd className="font-mono text-[10px] text-fg-dim">{m.note}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+
+            <ul className="mt-10 flex flex-wrap gap-1.5 border-t border-line pt-6" aria-label="Stack">
+              {kong.stack.map((t) => (
+                <li key={t} className="rounded border border-line bg-bg-1 px-2 py-1 font-mono text-[11px] text-fg-muted">
+                  {t}
+                </li>
+              ))}
+              <li className="ml-auto self-center font-mono text-[11px] text-fg-dim">{kong.status}</li>
+            </ul>
+          </div>
+        </header>
+
+        {/* Body */}
+        <div className="container-site grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-16">
+          <aside className="min-w-0 pt-8 lg:pt-14">
+            <CaseStudyNav />
+          </aside>
+
+          <div className="min-w-0">
+            {/* 01 Problem */}
+            <CaseSection
+              id="problem"
+              title="Gateway debugging is a sequence of narrow questions."
+              lede={
+                <>
+                  <p>
+                    Which route serves this path? Which service does it point to? Which plugins actually apply once scope
+                    precedence is accounted for? Is the upstream healthy? Does this consumer hold the credential the route
+                    requires? Each question is a specific Admin API call across routes, services, plugins, consumers,
+                    upstreams and health.
+                  </p>
+                  <p className="mt-4">
+                    The failure modes are not exotic — a disabled plugin that still shows in the UI, a route attached to
+                    the wrong service, a 503 that means “wrong address” rather than “backend down” — but they are easy to
+                    miss when eyeballing JSON, and the obvious first hypothesis is often wrong. An LLM is good at sequencing
+                    an investigation from a vague description. It is bad at being trusted with infrastructure state. The
+                    agent&rsquo;s job is to investigate; the model must not become the source of truth.
+                  </p>
+                </>
+              }
+              wide
+            >
+              {/* Centrepiece statement */}
+              <div className="relative overflow-hidden rounded-2xl border border-line bg-bg-1 px-6 py-14 text-center md:py-20">
+                <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid bg-grid-fade opacity-70" />
+                <p className="relative text-balance text-3xl font-semibold leading-tight tracking-tightest text-fg sm:text-4xl md:text-5xl">
+                  {kong.principle.a}
+                  <br />
+                  <span className="text-fg-muted">{kong.principle.b}</span>
                 </p>
+                <p className="relative mt-6 font-mono text-[11px] text-fg-dim">design principle · README</p>
               </div>
-            </div>
-            
-            <div className="mt-12 p-8 bg-surface border border-border rounded-xl text-center">
-              <p className="text-2xl font-serif italic text-bright">
-                &quot;The model owns the investigation. The code owns the facts.&quot;
-              </p>
-            </div>
-          </div>
-        </section>
 
-        {/* Architecture Section */}
-        <section className="py-20 border-b border-border bg-surface/30">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-2xl font-bold mb-12">Architecture</h2>
-            
-            <div className="relative border border-border rounded-xl bg-primary p-8 md:p-16 overflow-hidden">
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-              
-              <div className="relative z-10 flex flex-col items-center max-w-sm mx-auto space-y-2">
-                <div className="w-full p-4 border border-border bg-surface rounded-lg text-center font-bold">AI Client (Gemini)</div>
-                <div className="h-6 w-px bg-border"></div>
-                <div className="w-full p-3 border border-accent/50 bg-accent/5 text-accent rounded-lg text-center font-mono text-sm">Model Context Protocol</div>
-                <div className="h-6 w-px bg-border"></div>
-                <div className="w-full grid grid-cols-2 gap-2">
-                  <div className="p-3 border border-border bg-surface rounded-lg text-center text-xs">Context Mgmt</div>
-                  <div className="p-3 border border-border bg-surface rounded-lg text-center text-xs">Safety Layer</div>
-                </div>
-                <div className="h-6 w-px bg-border"></div>
-                <div className="w-full p-4 border border-border bg-surface rounded-lg text-center font-bold relative group">
-                  14 Read-Only Tools
-                  <div className="absolute inset-0 border-2 border-transparent group-hover:border-accent rounded-lg transition-colors"></div>
-                </div>
-                <div className="h-6 w-px bg-border"></div>
-                <div className="w-full p-4 border border-border bg-surface rounded-lg text-center font-bold">Kong Admin API</div>
-                <div className="h-6 w-px bg-border"></div>
-                <div className="w-full flex justify-between gap-2 text-xs text-muted font-mono">
-                  <div className="p-2 border border-border/50 rounded bg-surface/50 w-full text-center">Routes</div>
-                  <div className="p-2 border border-border/50 rounded bg-surface/50 w-full text-center">Services</div>
-                  <div className="p-2 border border-border/50 rounded bg-surface/50 w-full text-center">Plugins</div>
+              <div className="mt-6 grid gap-6 lg:grid-cols-12">
+                <Window title="Kong Manager · Routes" meta="seeded gateway" className="min-w-0 lg:col-span-8">
+                  <Image
+                    src={kongImages.kongRoutes.src}
+                    alt={kongImages.kongRoutes.alt}
+                    width={kongImages.kongRoutes.w}
+                    height={kongImages.kongRoutes.h}
+                    sizes="(min-width: 1024px) 720px, 100vw"
+                    className="w-full opacity-90"
+                  />
+                </Window>
+                <div className="flex flex-col justify-between rounded-xl border border-line bg-bg-1 p-5 lg:col-span-4">
+                  <div>
+                    <p className="label-mono">seeded topology</p>
+                    <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-3">
+                      {topology.map((t) => (
+                        <div key={t.label}>
+                          <dd className="font-mono text-xl tabular-nums text-fg">{t.value}</dd>
+                          <dt className="text-[11px] text-fg-muted">{t.label}</dt>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                  <p className="mt-6 text-[12.5px] leading-relaxed text-fg-muted">
+                    Ten intentional defects across eleven scenarios — a missing auth plugin, a disabled one, a rate limit
+                    far below traffic, a wrong upstream target, a typo&rsquo;d path, config drift — and one healthy route as the
+                    control that catches invented faults.
+                  </p>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
+            </CaseSection>
 
-        {/* Tools Section */}
-        <section className="py-20 border-b border-border">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="flex items-end justify-between mb-8">
-              <h2 className="text-2xl font-bold">MCP Tooling</h2>
-              <div className="flex gap-4 text-xs font-mono text-muted">
-                <span className="flex items-center gap-1"><LuShieldCheck size={14} className="text-accent" /> Read-only</span>
-                <span className="flex items-center gap-1"><LuFileCode size={14} className="text-accent" /> Schema validated</span>
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 font-mono text-sm">
-              {[
-                { group: "Routing", tools: ["find_route_by_path", "get_route", "get_service", "list_services", "list_routes_for_service"] },
-                { group: "Plugins", tools: ["list_plugins_for_route", "list_global_plugins"] },
-                { group: "Consumers", tools: ["get_consumer", "list_consumers"] },
-                { group: "Upstreams", tools: ["list_upstreams", "check_upstream_health"] },
-                { group: "Diagnostics", tools: ["diff_config", "diagnose_route", "explain_auth_failure"] }
-              ].map((category) => (
-                <div key={category.group} className="border border-border bg-surface p-4 rounded-lg">
-                  <h4 className="text-accent mb-3 text-xs uppercase tracking-wider">{category.group}</h4>
-                  <ul className="space-y-2 text-muted">
-                    {category.tools.map(tool => (
-                      <li key={tool} className="flex items-center gap-2">
-                        <LuTerminal size={12} /> {tool}
+            {/* 02 Architecture */}
+            <CaseSection
+              id="architecture"
+              title="Every layer has something it owns and something it must not do."
+              lede="The MCP server and its tools run without any LLM. The agent and evaluation harness are consumers of the tool layer, not part of it. Select a node to see its responsibilities."
+            >
+              <ArchitectureDiagram />
+            </CaseSection>
+
+            {/* 03 MCP Tooling */}
+            <CaseSection
+              id="tooling"
+              title="Fourteen tools, one vocabulary."
+              lede="MCP gives the model a fixed vocabulary of operations — each with a schema, a description of when to use it, and a bounded result — instead of an HTTP client and a URL. The whole attack and blast surface is enumerable in one file. There is deliberately no execute_kong_api_call tool."
+            >
+              <ToolCatalog />
+            </CaseSection>
+
+            {/* 04 Agentic Workflow */}
+            <CaseSection
+              id="agent"
+              title="The premise was wrong, and the agent said so."
+              lede={
+                <>
+                  Actual output of{" "}
+                  <code className="font-mono text-[13px] text-fg">npm run agent -- --trace &quot;{demoRun.question}&quot;</code>{" "}
+                  against the seeded gateway and gemini-3.5-flash-lite, captured {kong.capturedOn}. Two tool calls. The
+                  route was not rejecting anything: no authentication plugin was attached or enabled at any scope, so Kong
+                  was passing every request through. The agent corrected the question from evidence rather than accepting it.
+                </>
+              }
+            >
+              <div className="grid gap-6 lg:grid-cols-12">
+                <div className="min-w-0 lg:col-span-7">
+                  <AgentConsole autoplay />
+                </div>
+                <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
+                  {/* Investigation path */}
+                  <ol className="rounded-xl border border-line bg-bg-1 p-4" aria-label="Investigation path">
+                    {[
+                      { k: "find_route_by_path", v: '{"path":"/payments"}', r: "route:payments-prod" },
+                      { k: "diagnose_route", v: '{"route":"route:payments-prod"}', r: "evidence bundle · 7× GET" },
+                      { k: "evidence", v: "route · service · global plugins read", r: "absence can be asserted" },
+                      { k: demoRun.finding.code, v: `${demoRun.finding.severity} · ${demoRun.finding.confidence}`, r: "rule output, not model output" },
+                      { k: "diagnosis", v: "prose + next steps + limitations", r: "3 steps · $0.0046" },
+                    ].map((s, i, a) => (
+                      <li key={s.k} className="relative grid grid-cols-[16px_1fr] gap-x-3">
+                        <div className="flex flex-col items-center" aria-hidden>
+                          <span className={`mt-1.5 h-2 w-2 rounded-full ${i >= 3 ? "bg-accent" : "border border-fg-dim"}`} />
+                          {i < a.length - 1 && <span className="w-px flex-1 bg-line-strong" />}
+                        </div>
+                        <div className={i < a.length - 1 ? "pb-3" : ""}>
+                          <code className={`font-mono text-[12px] ${i >= 3 ? "text-accent" : "text-fg"}`}>{s.k}</code>
+                          <div className="font-mono text-[11px] text-fg-muted">{s.v}</div>
+                          <div className="font-mono text-[10px] text-fg-dim">→ {s.r}</div>
+                        </div>
                       </li>
                     ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+                  </ol>
 
-        {/* Context Management Section */}
-        <section className="py-20 border-b border-border bg-surface/30">
-          <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-2xl font-bold mb-8">Context Management</h2>
-            <p className="text-muted mb-12">
-              Language models struggle with massive configuration dumps. The solution is aggressive, deterministic context reduction before the model sees the data.
-            </p>
-            
-            <div className="space-y-8 font-mono">
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted">Raw Admin API dump</span>
-                  <span className="text-bright">28,658 bytes</span>
-                </div>
-                <div className="h-4 w-full bg-surface rounded overflow-hidden flex">
-                  <div className="h-full bg-border w-full"></div>
-                </div>
-              </div>
-              
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted">Summarized context</span>
-                  <span className="text-bright">8,071 bytes</span>
-                </div>
-                <div className="h-4 w-full bg-surface rounded overflow-hidden flex">
-                  <div className="h-full bg-muted w-[28%]"></div>
+                  {/* Structured finding */}
+                  <div className="rounded-xl border border-line bg-bg-1 p-4">
+                    <p className="label-mono">finding · as an MCP client receives it</p>
+                    <dl className="mt-3 grid grid-cols-2 gap-y-2 font-mono text-[11px]">
+                      <dt className="text-fg-dim">code</dt>
+                      <dd className="text-warn">{demoRun.finding.code}</dd>
+                      <dt className="text-fg-dim">category</dt>
+                      <dd className="text-fg">{demoRun.finding.category}</dd>
+                      <dt className="text-fg-dim">severity</dt>
+                      <dd className="text-fg">{demoRun.finding.severity}</dd>
+                      <dt className="text-fg-dim">confidence</dt>
+                      <dd className="text-ok">{demoRun.finding.confidence}</dd>
+                      <dt className="text-fg-dim">entityRef</dt>
+                      <dd className="text-fg">{demoRun.finding.entityRef}</dd>
+                    </dl>
+                    <ul className="mt-3 border-t border-line pt-3 font-mono text-[11px] text-fg-muted">
+                      {demoRun.finding.evidence.map((e) => (
+                        <li key={e}>· {e}</li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
-              
-              <div>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-muted">Targeted diagnosis payload</span>
-                  <span className="text-accent font-bold">3,164 bytes</span>
-                </div>
-                <div className="h-4 w-full bg-surface rounded overflow-hidden flex">
-                  <div className="h-full bg-accent w-[11%]"></div>
-                </div>
-                <p className="text-xs text-muted mt-4 font-sans">
-                  Achieved via progressive collection, bounded results, and reference serialization rather than deep nesting.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Evaluation Section */}
-        <section className="py-20 border-b border-border">
-          <div className="max-w-4xl mx-auto px-6">
-            <div className="flex items-center gap-3 mb-8">
-              <h2 className="text-2xl font-bold">Evaluation Dashboard</h2>
-              <span className="px-2 py-0.5 bg-accent/10 text-accent border border-accent/20 rounded font-mono text-xs">run-003</span>
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div className="p-6 border border-border bg-surface rounded-xl">
-                <div className="text-3xl font-mono text-bright mb-1">28</div>
-                <div className="text-xs text-muted uppercase tracking-wider font-bold">Cases Passed</div>
+              <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
+                <Window title="npm run agent · terminal" meta="captured output">
+                  <Image
+                    src={kongImages.agentDiagnosis.src}
+                    alt={kongImages.agentDiagnosis.alt}
+                    width={kongImages.agentDiagnosis.w}
+                    height={kongImages.agentDiagnosis.h}
+                    sizes="(min-width: 768px) 460px, 100vw"
+                    className="w-full"
+                  />
+                </Window>
+                <Window title="npm run agent · a second question" meta="HEALTHCHECKS_OFF, not unhealthy">
+                  <Image
+                    src={kongImages.agentUpstream.src}
+                    alt={kongImages.agentUpstream.alt}
+                    width={kongImages.agentUpstream.w}
+                    height={kongImages.agentUpstream.h}
+                    sizes="(min-width: 768px) 460px, 100vw"
+                    className="w-full"
+                  />
+                </Window>
               </div>
-              <div className="p-6 border border-border bg-surface rounded-xl">
-                <div className="text-3xl font-mono text-green-400 mb-1">100%</div>
-                <div className="text-xs text-muted uppercase tracking-wider font-bold">Finding Recall</div>
-              </div>
-              <div className="p-6 border border-border bg-surface rounded-xl">
-                <div className="text-3xl font-mono text-green-400 mb-1">100%</div>
-                <div className="text-xs text-muted uppercase tracking-wider font-bold">Fact Match</div>
-              </div>
-              <div className="p-6 border border-border bg-surface rounded-xl">
-                <div className="text-3xl font-mono text-bright mb-1">0</div>
-                <div className="text-xs text-muted uppercase tracking-wider font-bold">Repeated Tools</div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-4">
-               <div className="p-4 border border-border bg-surface rounded-lg flex justify-between items-center">
-                 <span className="text-sm text-muted">Mean Steps</span>
-                 <span className="font-mono text-bright">3.5</span>
-               </div>
-               <div className="p-4 border border-border bg-surface rounded-lg flex justify-between items-center">
-                 <span className="text-sm text-muted">Tools / Case</span>
-                 <span className="font-mono text-bright">2.57</span>
-               </div>
-               <div className="p-4 border border-border bg-surface rounded-lg flex justify-between items-center">
-                 <span className="text-sm text-muted">Est. Cost</span>
-                 <span className="font-mono text-bright">$0.149</span>
-               </div>
-            </div>
-            <p className="text-xs text-muted mt-4 italic text-center">
-              * Demonstration benchmark against deterministic scenarios, not a universal statistical guarantee.
-            </p>
-          </div>
-        </section>
+              <p className="mt-4 max-w-prose text-[13px] leading-relaxed text-fg-muted">
+                The loop is the project&rsquo;s own, not the SDK&rsquo;s: a step limit of 10, identical-call detection, a
+                cumulative context budget, and a halt path that keeps tools declared but forbidden so the model must
+                write an explicitly incomplete answer rather than an empty one. A provider error ends the run as
+                provider_error, never as a diagnosis.
+              </p>
+            </CaseSection>
 
-        {/* Failure Modes & Safety */}
-        <section className="py-20">
-          <div className="max-w-4xl mx-auto px-6 grid lg:grid-cols-2 gap-16">
-            
-            {/* Failure Modes */}
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Where it broke</h2>
-              <p className="text-muted text-sm mb-8">Documented development failures.</p>
-              
-              <div className="space-y-4">
-                {[
-                  { code: "AGENT-HALT-TOOLS-001", fix: "Implemented tool execution bounds." },
-                  { code: "EVAL-SCORING-BRITTLE-001", fix: "Moved to deterministic assertion scoring." },
-                  { code: "HEALTH-VERDICT-REVERT-001", fix: "Forced explicit health endpoint check." }
-                ].map((failure) => (
-                  <div key={failure.code} className="p-4 border border-red-900/30 bg-red-900/10 rounded-lg">
-                    <div className="font-mono text-xs text-red-400 mb-2">{failure.code}</div>
-                    <div className="text-sm text-bright flex gap-2">
-                      <span className="text-muted">Fix:</span> {failure.fix}
+            {/* 05 Context */}
+            <CaseSection
+              id="context"
+              title="Make the targeted result the normal case."
+              lede="A naive design gives the model the whole gateway and lets it find the relevant part. Measured on the seeded gateway, a single-route diagnosis is 11% of the raw configuration dump. Every mechanism below exists to make that row the normal case — and none of them drop anything silently."
+              wide
+            >
+              <CompressionChart />
+            </CaseSection>
+
+            {/* 06 Safety */}
+            <CaseSection
+              id="safety"
+              title="Read-only by structure, not by instruction."
+              lede="The system sits between an LLM and an unauthenticated Admin API — a control plane. The threats that matter are a write, a leaked secret, an asserted falsehood, a loop, and unvalidated input. Each control below exists in the code and has a test; the limitation is stated with the same weight."
+            >
+              <SafetyChain />
+            </CaseSection>
+
+            {/* 07 Observability */}
+            <CaseSection
+              id="observability"
+              title="A number is reported only if it was measured."
+              lede="Structured JSON via pino, to stderr and optionally a file — never stdout. Every tool call and every LLM call is recorded; a separate audit log records what the model attempted and what it was allowed to do. Metrics are computed only from recorded calls, with nearest-rank percentiles because interpolation invents a latency no call had."
+            >
+              <TelemetryPanel />
+            </CaseSection>
+
+            {/* 08 Evaluation */}
+            <CaseSection
+              id="evaluation"
+              title="28 cases, a deterministic scorer, and the bad runs kept."
+              lede="One case per user question, across 11 scenarios and three difficulties, with phrasings varied on purpose and two false-positive controls. A case passes only if the deterministic engine produced every expected finding, the answer contains every expected fact and no named wrong conclusion, and the run finished within its limits. No LLM judge."
+              wide
+            >
+              <EvaluationDashboard />
+            </CaseSection>
+
+            {/* 09 Failure modes */}
+            <CaseSection
+              id="failure-modes"
+              title="Where it broke"
+              lede="Each entry was observed while building the repository. The symptom is what actually appeared; the root cause is what was actually found. Identifiers are stable and referenced from code comments and tests."
+              wide
+            >
+              <FailureModeGrid />
+            </CaseSection>
+
+            {/* 10 Testing */}
+            <CaseSection
+              id="testing"
+              title="Three suites, one command each."
+              lede="Unit tests need no Docker and no network. Integration tests run against the live seeded Kong, including MCP over real stdio. End-to-end tests take a question through the agent, a tool, Kong and back to a diagnosis with a live model."
+            >
+              <TestMetrics />
+            </CaseSection>
+
+            {/* 11 Limitations */}
+            <CaseSection
+              id="limitations"
+              title="What it does not do."
+              lede="Stated with the same care as the features. Several of these shaped the harness more than the model did."
+            >
+              <ol className="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+                {limitations.map((l, i) => (
+                  <li key={l.title} className="bg-bg p-5">
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-[10px] tabular-nums text-fg-dim">{String(i + 1).padStart(2, "0")}</span>
+                      <h3 className="text-sm font-semibold text-fg">{l.title}</h3>
                     </div>
-                  </div>
+                    <p className="mt-2 text-[13px] leading-relaxed text-fg-muted">{l.detail}</p>
+                  </li>
                 ))}
+              </ol>
+            </CaseSection>
+
+            {/* Closing */}
+            <div className="border-t border-line py-14 md:py-20">
+              <div className="grid gap-8 rounded-2xl border border-line bg-bg-1 p-7 md:grid-cols-12 md:items-center md:p-10">
+                <div className="md:col-span-8">
+                  <Motif />
+                  <h2 className="mt-4 text-balance text-2xl font-semibold tracking-tight text-fg md:text-3xl">
+                    The code is the case study.
+                  </h2>
+                  <p className="mt-3 max-w-prose text-[15px] leading-relaxed text-fg-muted">
+                    Every number on this page is copied from the repository&rsquo;s README, docs and result files. The
+                    fourteen architecture decisions, the full failure-mode record and every verbatim evaluation answer are
+                    there too.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-3 md:col-span-4 md:justify-end">
+                  <Button href={kong.repo} external>
+                    <Github size={16} /> {kong.repoName} <ArrowUpRight size={14} />
+                  </Button>
+                  <Button href="/#contact" variant="secondary">
+                    Contact
+                  </Button>
+                </div>
               </div>
             </div>
-
-            {/* Safety */}
-            <div>
-              <h2 className="text-2xl font-bold mb-2">Safety constraints</h2>
-              <p className="text-muted text-sm mb-8">Engineering boundaries.</p>
-              
-              <ul className="space-y-6">
-                <li className="flex gap-4">
-                  <div className="mt-1"><LuShieldCheck size={20} className="text-accent" /></div>
-                  <div>
-                    <h4 className="font-bold text-bright">Strictly Read-Only</h4>
-                    <p className="text-sm text-muted mt-1">No write methods are exposed to the agent. State mutation is impossible by design.</p>
-                  </div>
-                </li>
-                <li className="flex gap-4">
-                  <div className="mt-1"><LuDatabase size={20} className="text-accent" /></div>
-                  <div>
-                    <h4 className="font-bold text-bright">Kong is Authoritative</h4>
-                    <p className="text-sm text-muted mt-1">The LLM cannot invent configurations. All diagnostic findings originate from deterministic rules against actual gateway state.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            
           </div>
-        </section>
-
+        </div>
       </main>
       <Footer />
     </>

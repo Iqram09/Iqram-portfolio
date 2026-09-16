@@ -1,68 +1,48 @@
-# Iqram Patel — Portfolio (Next.js)
+# Iqram Patel — Portfolio
 
-A modern, dark-themed Data Science & Full-Stack Developer portfolio built with **Next.js 14**, **TypeScript**, and **Tailwind CSS**.
+Personal portfolio of Mohammed Iqram Patel, AI / Software Engineer (Mumbai).
+Built with Next.js 14 (App Router), TypeScript and Tailwind CSS. No animation or icon libraries.
 
-## ✨ Features
-- Typewriter hero with animated roles
-- Scroll-triggered section reveals
-- Animated skill progress bars (Full-Stack + Data Science)
-- Project cards with category filters
-- DS Bootcamp highlight card with progress bar
-- Experience timeline
-- Contact form
-- Fully responsive (mobile-first)
-- Custom scrollbar & smooth transitions
+## Routes
 
-## 🚀 Quick Start
+| Route | Purpose |
+| --- | --- |
+| `/` | Home: hero + system trace, metrics, featured Kong project, interactive live system, principles, engineering surface, other work, experience, skills, learning, about, resume/GitHub, contact |
+| `/projects/kong-ai-gateway-diagnostics` | Technical case study (11 sections) |
+| `/resume` | PDF preview + download of `public/Iqram_Patel_CV.pdf` |
+| `*` | Custom 404 |
 
-```bash
-# 1. Install dependencies
+## Structure
+
+```
+app/                 routes, layout (metadata, fonts), globals.css, icon.svg
+components/          page sections (server components unless interaction requires a client)
+components/ui/       Button, SectionHeader, Reveal, Motif, Window, Icons
+components/case-study/  ArchitectureDiagram, ToolCatalog, CompressionChart, SafetyChain,
+                        TelemetryPanel, EvaluationDashboard, FailureModeGrid, TestMetrics, CaseStudyNav
+data/                site.ts (identity/links), projects.ts, kong.ts (case-study dataset),
+                     experience.ts, skills.ts
+public/              Iqram_Patel_CV.pdf, og.png, kong/ (captured screenshots)
+```
+
+All project content lives in `data/`. Every figure in `data/kong.ts` is copied from the
+Kong AI Gateway Diagnostics repository (README, docs, `evals/results/run-003.*`).
+
+## Scripts
+
+```
 npm install
-
-# 2. Run dev server
-npm run dev
-
-# 3. Open in browser
-# http://localhost:3000
+npm run dev        # http://localhost:3000
+npm run lint
+npm run typecheck
+npm run build && npm start
 ```
 
-## 🏗️ Project Structure
+## Updating content
 
-```
-iqram-portfolio/
-├── app/
-│   ├── globals.css       # Global styles + Tailwind
-│   ├── icon.png
-│   ├── layout.tsx        # Root layout
-│   └── page.tsx          # Main page (assembles sections)
-├── components/
-│   ├── Navbar.tsx        # Fixed nav with active-section tracking
-│   ├── Hero.tsx          # Typewriter hero + avatar card
-│   ├── About.tsx         # About + stats
-│   ├── Skills.tsx        # Animated skill bars (Dev + DS)
-│   ├── Projects.tsx      # Filterable project cards
-│   ├── Education.tsx     # Timeline + DS Bootcamp card
-│   ├── Contact.tsx       # Contact info + form
-│   └── Footer.tsx
-├── hooks/
-│   └── useInView.ts      # IntersectionObserver for scroll animations
-├── public/
-│   └── img.jpg
-├── tailwind.config.js
-├── next.config.js
-└── tsconfig.json
-```
-
-## 🎨 Design Tokens
-- **Background:** `#0A0F1C`
-- **Surface:**    `#0F1629`
-- **Accent:**     `#00C9B1` (teal)
-- **Font:**       Outfit (body) + Syne (headings)
-
-## 📦 Tech Stack
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- React Icons
-- Framer Motion (optional — remove from package.json if not needed)
-
+- Identity, email, links: `data/site.ts`
+- Projects and filters: `data/projects.ts`
+- Kong case study numbers, tools, failure modes, limitations: `data/kong.ts`
+- Experience / education / learning: `data/experience.ts`
+- Skills: `data/skills.ts`
+- Resume: replace `public/Iqram_Patel_CV.pdf` (filename is referenced from `data/site.ts`)

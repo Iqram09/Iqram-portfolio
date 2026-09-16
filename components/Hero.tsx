@@ -1,121 +1,78 @@
-"use client";
-
-import Link from "next/link";
-import { LuArrowRight, LuGithub, LuFileText } from "react-icons/lu";
-import { useEffect, useState } from "react";
+import { site } from "@/data/site";
+import Button from "@/components/ui/Button";
+import Motif from "@/components/ui/Motif";
+import SystemGraph from "@/components/SystemGraph";
+import { ArrowRight, Github, FileText, MapPin } from "@/components/ui/Icons";
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-20">
-      {/* Background glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-[100px] pointer-events-none" />
+    <section
+      className="relative overflow-hidden pt-[calc(var(--nav-h)+48px)] pb-16 md:pt-[calc(var(--nav-h)+80px)] md:pb-24"
+      aria-labelledby="hero-title"
+    >
+      {/* Restrained accent field — one soft radial, no blobs. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(60%_50%_at_70%_0%,rgba(56,189,248,0.10),transparent_70%)]"
+      />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-dots opacity-40 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
 
-      <div className="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center w-full z-10">
-        {/* Text Content */}
-        <div className="flex flex-col gap-8 animate-fade-in">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface rounded-full border border-border text-xs font-mono text-muted mb-6">
-              <span className="text-accent">Mumbai, India</span>
-              <span className="w-1 h-1 rounded-full bg-border" />
-              <span>Available for opportunities</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-bright leading-tight">
-              AI engineering, software architecture, and{" "}
-              <span className="text-gradient-accent">systems that work.</span>
-            </h1>
+      <div className="container-site relative grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
+        {/* Copy */}
+        <div className="lg:col-span-6 xl:col-span-6">
+          <div className="animate-fade-up flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-xs text-fg-muted">
+            <span className="text-fg">{site.displayName}</span>
+            <span aria-hidden className="text-line-strong">/</span>
+            <span>{site.role}</span>
           </div>
 
-          <p className="text-lg text-muted max-w-xl leading-relaxed">
-            I am a software engineer focused on AI platforms, agentic systems, API
-            architecture, and full-stack engineering. I build systems where AI is
-            constrained by strong interfaces, observability, evaluation, and
-            deterministic infrastructure.
+          <h1
+            id="hero-title"
+            className="animate-fade-up mt-6 text-balance text-[2.6rem] font-semibold leading-[1.02] tracking-tightest text-fg sm:text-6xl lg:text-[3.4rem] xl:text-[4rem] [animation-delay:60ms]"
+          >
+            I build AI systems with{" "}
+            <span className="text-fg-muted">software engineering discipline.</span>
+          </h1>
+
+          <p className="animate-fade-up mt-7 max-w-xl text-pretty text-lg leading-relaxed text-fg [animation-delay:120ms]">
+            Software engineer focused on AI platforms, agentic systems, API architecture, and
+            full-stack engineering.
+          </p>
+          <p className="animate-fade-up mt-4 max-w-xl text-pretty text-[15px] leading-relaxed text-fg-muted [animation-delay:160ms]">
+            I like building systems where AI is constrained by strong interfaces, evaluated with
+            real data, and connected to infrastructure through explicit engineering boundaries.
           </p>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <a
-              href="#work"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-bright text-primary font-medium rounded-lg hover:bg-bright/90 transition-colors"
-            >
-              View selected work
-              <LuArrowRight size={18} />
-            </a>
-            <a
-              href="https://github.com/Iqram09"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-surface text-bright border border-border rounded-lg hover:border-accent/50 hover:bg-surface/80 transition-colors"
-            >
-              <LuGithub size={18} />
-              GitHub
-            </a>
-            <Link
-              href="/resume"
-              className="inline-flex items-center gap-2 px-6 py-3 text-muted hover:text-bright transition-colors font-medium"
-            >
-              <LuFileText size={18} />
-              Resume
-            </Link>
+          <div className="animate-fade-up mt-9 flex flex-wrap items-center gap-3 [animation-delay:220ms]">
+            <Button href="/#work">
+              View selected work <ArrowRight size={16} />
+            </Button>
+            <Button href="/resume" variant="secondary">
+              <FileText size={16} /> View resume
+            </Button>
+            <Button href={site.github} variant="ghost" external>
+              <Github size={16} /> GitHub
+            </Button>
+          </div>
+
+          <div className="animate-fade-up mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 [animation-delay:280ms]">
+            <span className="inline-flex items-center gap-2 font-mono text-xs text-fg-muted">
+              <MapPin size={14} className="text-fg-dim" />
+              {site.location}
+            </span>
+            <span className="inline-flex items-center gap-2 font-mono text-xs text-fg-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
+              {site.availability}
+            </span>
+            <Motif />
           </div>
         </div>
 
-        {/* Visual Content: Architecture Graph */}
-        <div
-          className={`relative h-[400px] w-full border border-border bg-surface/50 rounded-xl p-8 flex flex-col justify-center transition-opacity duration-1000 ${
-            mounted ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          {/* Animated Graph */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent opacity-50 rounded-xl" />
-          
-          <div className="relative z-10 flex flex-col h-full justify-between max-w-sm mx-auto font-mono text-sm">
-            <GraphNode label="User Request" delay="0s" />
-            <GraphEdge />
-            <GraphNode label="AI Agent (Gemini)" highlight delay="0.5s" />
-            <GraphEdge />
-            <GraphNode label="MCP Server" delay="1s" />
-            <GraphEdge />
-            <GraphNode label="API Gateway (Kong)" delay="1.5s" />
-            <GraphEdge />
-            <GraphNode label="Deterministic Diagnosis" delay="2s" />
-          </div>
+        {/* Visual */}
+        <div className="animate-fade-in lg:col-span-6 [animation-delay:200ms]">
+          <SystemGraph />
         </div>
       </div>
     </section>
-  );
-}
-
-function GraphNode({
-  label,
-  highlight = false,
-  delay = "0s",
-}: {
-  label: string;
-  highlight?: boolean;
-  delay?: string;
-}) {
-  return (
-    <div
-      className={`px-4 py-3 rounded border text-center transition-all duration-700 animate-slide-up ${
-        highlight
-          ? "border-accent text-accent bg-accent/10 shadow-[0_0_15px_rgba(0,229,255,0.2)]"
-          : "border-border text-muted bg-primary"
-      }`}
-      style={{ animationDelay: delay }}
-    >
-      {label}
-    </div>
-  );
-}
-
-function GraphEdge() {
-  return (
-    <div className="flex-1 w-px bg-gradient-to-b from-border via-accent/30 to-border mx-auto my-1" />
   );
 }

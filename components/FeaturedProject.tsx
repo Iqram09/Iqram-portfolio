@@ -1,112 +1,125 @@
+import Image from "next/image";
 import Link from "next/link";
-import { LuArrowRight, LuGithub } from "react-icons/lu";
+import { kong, headlineMetrics, topology, kongImages } from "@/data/kong";
+import SectionHeader from "@/components/ui/SectionHeader";
+import Button from "@/components/ui/Button";
+import Window from "@/components/ui/Window";
+import Motif from "@/components/ui/Motif";
+import Reveal from "@/components/ui/Reveal";
+import { ArrowRight, Github } from "@/components/ui/Icons";
 
 export default function FeaturedProject() {
+  const shot = kongImages.agentDiagnosis;
+  const href = `/projects/${kong.slug}`;
+
   return (
-    <section id="work" className="py-24">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="mb-12">
-          <h2 className="text-3xl font-bold text-bright mb-4">Featured Work</h2>
-          <div className="w-12 h-1 bg-accent" />
-        </div>
-
-        <div className="group relative border border-border bg-surface rounded-2xl overflow-hidden card-hover">
-          <div className="grid lg:grid-cols-2 gap-0">
-            {/* Project Info */}
-            <div className="p-8 md:p-12 flex flex-col justify-center">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary rounded-full border border-border text-xs font-mono text-accent mb-6 w-max">
-                MCP Server · Agentic Diagnostics · LLM Evaluation
+    <section id="work" className="scroll-mt-20 py-20 md:py-28" aria-labelledby="featured-title">
+      <div className="container-site">
+        <Reveal>
+          <SectionHeader
+            index="01"
+            eyebrow="Featured work"
+            id="featured-title"
+            title={kong.title}
+            lede={kong.subtitle}
+            aside={
+              <div className="flex items-center gap-2 font-mono text-[11px] text-fg-dim">
+                <span className="rounded border border-line bg-bg-2 px-2 py-1">reference implementation</span>
+                <span className="rounded border border-line bg-bg-2 px-2 py-1">2026</span>
               </div>
-              
-              <h3 className="text-3xl font-bold text-bright mb-4">
-                Kong AI Gateway Diagnostics
-              </h3>
-              
-              <p className="text-muted text-lg mb-8 leading-relaxed">
-                A read-only MCP-based AI agent that investigates Kong Gateway
-                configuration through bounded tools, deterministic diagnostics,
-                context management, evaluation, and observability.
-              </p>
+            }
+          />
+        </Reveal>
 
-              <div className="flex flex-wrap gap-2 mb-8">
-                {["TypeScript", "MCP", "Kong", "Gemini", "Docker", "Vitest"].map(
-                  (tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 bg-primary border border-border rounded text-xs font-mono text-muted"
-                    >
-                      {tech}
-                    </span>
-                  )
-                )}
-              </div>
-
-              <div className="flex items-center gap-4 mt-auto">
-                <Link
-                  href="/projects/kong-ai-gateway-diagnostics"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-bright text-primary font-medium rounded-lg hover:bg-bright/90 transition-colors"
-                >
-                  Read Case Study
-                  <LuArrowRight size={18} />
+        <Reveal delay={80} className="mt-10 md:mt-14">
+          <article className="group overflow-hidden rounded-2xl border border-line bg-bg-1">
+            <div className="grid lg:grid-cols-12">
+              {/* Visual */}
+              <div className="relative min-w-0 border-b border-line bg-bg-2/40 p-4 sm:p-6 lg:col-span-7 lg:border-b-0 lg:border-r">
+                <div aria-hidden className="pointer-events-none absolute inset-0 bg-grid opacity-60 [mask-image:radial-gradient(70%_70%_at_50%_40%,black,transparent)]" />
+                <Link href={href} className="relative block rounded-lg focus-visible:outline-offset-4" aria-label="Open the Kong AI Gateway Diagnostics case study">
+                  <Window title="npm run agent -- &quot;Why is authentication failing on /payments?&quot;" meta="gemini-3.5-flash-lite">
+                    <div className="overflow-hidden">
+                      <Image
+                        src={shot.src}
+                        alt={shot.alt}
+                        width={shot.w}
+                        height={shot.h}
+                        sizes="(min-width: 1024px) 700px, 100vw"
+                        priority={false}
+                        className="w-full transition-transform duration-500 ease-out group-hover:scale-[1.012]"
+                      />
+                    </div>
+                  </Window>
                 </Link>
-                <a
-                  href="https://github.com/Iqram09/kong-ai-gateway-diagnostics"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center p-3 text-muted hover:text-bright border border-border rounded-lg hover:border-accent/50 hover:bg-primary transition-colors"
-                  aria-label="GitHub Repository"
-                >
-                  <LuGithub size={20} />
-                </a>
-              </div>
-            </div>
 
-            {/* Project Visual (Code / Architecture representation) */}
-            <div className="bg-[#0A0A0B] border-l border-border p-8 hidden lg:flex flex-col justify-center font-mono text-sm">
-              <div className="w-full max-w-md mx-auto">
-                <div className="flex items-center gap-2 mb-4 border-b border-border pb-4">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50" />
-                    <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/50" />
-                  </div>
-                  <div className="text-muted text-xs ml-2">agent_diagnostics.ts</div>
+                {/* Topology strip — seeded gateway facts. */}
+                <dl className="relative mt-4 grid grid-cols-4 gap-x-3 gap-y-3 sm:grid-cols-7">
+                  {topology.map((t) => (
+                    <div key={t.label} className="min-w-0">
+                      <dt className="truncate font-mono text-[10px] uppercase tracking-wider text-fg-dim">{t.label}</dt>
+                      <dd className="font-mono text-base tabular-nums text-fg">{t.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* Narrative */}
+              <div className="flex min-w-0 flex-col p-6 sm:p-8 lg:col-span-5 lg:p-10">
+                <Motif />
+                <p className="mt-6 text-pretty text-[15px] leading-relaxed text-fg-muted">
+                  An MCP server that lets an LLM agent investigate a Kong Gateway through fourteen read-only,
+                  bounded, schema-validated tools. A deterministic diagnostic engine produces the facts, a bounded
+                  agent loop produces the explanation, and an evaluation harness measures whether it works.
+                </p>
+
+                <blockquote className="mt-6 border-l-2 border-accent pl-4">
+                  <p className="text-lg font-medium leading-snug tracking-tight text-fg">
+                    {kong.principle.a}
+                    <br />
+                    <span className="text-fg-muted">{kong.principle.b}</span>
+                  </p>
+                </blockquote>
+
+                <ul className="mt-6 flex flex-wrap gap-1.5" aria-label="Technologies">
+                  {kong.stack.map((t) => (
+                    <li key={t} className="rounded border border-line bg-bg-2 px-2 py-1 font-mono text-[11px] text-fg-muted">
+                      {t}
+                    </li>
+                  ))}
+                </ul>
+
+                <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line">
+                  {headlineMetrics.map((m) => (
+                    <div key={m.label} className="bg-bg-1 p-4">
+                      <dd className="font-mono text-2xl tabular-nums text-fg">
+                        {m.value}
+                        {m.suffix}
+                      </dd>
+                      <dt className="mt-1 text-xs text-fg-muted">
+                        {m.label}
+                        {m.suffix === "%" && <span className="ml-1 font-mono text-[10px] text-fg-dim">· run-003</span>}
+                      </dt>
+                    </div>
+                  ))}
+                </dl>
+
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <Button href={href}>
+                    Read case study <ArrowRight size={16} />
+                  </Button>
+                  <Button href={kong.repo} variant="secondary" external>
+                    <Github size={16} /> GitHub
+                  </Button>
                 </div>
-                
-                <div className="space-y-2 text-muted">
-                  <div className="flex gap-4">
-                    <span className="text-border">1</span>
-                    <span><span className="text-blue-400">const</span> <span className="text-yellow-200">result</span> = <span className="text-blue-400">await</span> agent.<span className="text-accent">diagnose_route</span>(&#123;</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-border">2</span>
-                    <span className="pl-4">route_name: <span className="text-green-400">&quot;/payments&quot;</span>,</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-border">3</span>
-                    <span className="pl-4">issue: <span className="text-green-400">&quot;auth failure&quot;</span></span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-border">4</span>
-                    <span>&#125;);</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-border">5</span>
-                    <span><span className="text-border">{"/*"}</span></span>
-                  </div>
-                  <div className="flex gap-4 animate-pulse-slow">
-                    <span className="text-border">6</span>
-                    <span className="text-accent">→ evidence: NO_AUTH_PLUGIN_ATTACHED</span>
-                  </div>
-                  <div className="flex gap-4">
-                    <span className="text-border">7</span>
-                    <span className="text-border">{"*/"}</span>
-                  </div>
-                </div>
+
+                <p className="mt-6 font-mono text-[11px] leading-relaxed text-fg-dim">
+                  {kong.status}
+                </p>
               </div>
             </div>
-          </div>
-        </div>
+          </article>
+        </Reveal>
       </div>
     </section>
   );
