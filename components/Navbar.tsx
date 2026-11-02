@@ -1,154 +1,236 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AnimatePresence, LazyMotion, m, useReducedMotion } from "framer-motion";
 import { navLinks, site } from "@/data/site";
-import { Menu, Close } from "@/components/ui/Icons";
+import AnchorLink from "@/components/ui/AnchorLink";
+import Glint from "@/components/brand/Glint";
+import Glow from "@/components/brand/Glow";
+import { Close, Menu } from "@/components/ui/Icons";
+import { cn } from "@/lib/cn";
+import { afterIdle } from "@/lib/motion";
 
-const SECTION_IDS = ["work", "experience", "skills", "about", "contact"] as const;
+const loadFeatures = () => afterIdle().then(() => import("@/lib/motion-features")).then((r) => r.default);
+const EASE = [0.16, 1, 0.3, 1] as const;
 
+/**
+ * Minimal floating glass navigation. The active section is marked by a glass
+ * pill that glides between links (Framer Motion shared layout); a hairline
+ * along the pill's lower edge shows reading progress.
+ */
 export default function Navbar() {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const [scrolled, setScrolled] = useState(false);
+  const reduce = useReducedMotion();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const progress = useRef<HTMLSpanElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
 
+  // Condensed state + reading progress, batched to one frame.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
-    onScroll();
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      setScrolled(window.scrollY > 24);
+      if (progress.current) progress.current.style.transform = `scaleX(${max > 0 ? Math.min(1, window.scrollY / max) : 0})`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, [pathname]);
 
-  // Active-section indicator (home only).
+  // Active section (home only).
   useEffect(() => {
     if (!isHome || typeof IntersectionObserver === "undefined") return;
-    const els = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[];
-    if (els.length === 0) return;
+    const els = navLinks.map((l) => document.getElementById(l.id)).filter(Boolean) as HTMLElement[];
     const obs = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
         if (visible) setActive(visible.target.id);
       },
-      { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.1, 0.25] }
+      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.1] }
     );
     els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
+    const top = document.getElementById("top");
+    const topObs = new IntersectionObserver(([e]) => e.isIntersecting && setActive(null), { threshold: 0.4 });
+    if (top) topObs.observe(top);
+    return () => {
+      obs.disconnect();
+      topObs.disconnect();
+    };
   }, [isHome]);
 
-  // Close the mobile menu on route change / escape.
   useEffect(() => setOpen(false), [pathname]);
+
   const onKey = useCallback((e: KeyboardEvent) => {
-    if (e.key === "Escape") setOpen(false);
+    if (e.key === "Escape") {
+      setOpen(false);
+      toggle.current?.focus();
+    }
   }, []);
   useEffect(() => {
     if (!open) return;
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.documentElement.style.overflow = "";
+    };
   }, [open, onKey]);
 
-  const isActive = (id: string) => {
-    if (id === "resume") return pathname === "/resume";
-    return isHome && active === id;
-  };
-
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[height,background-color,border-color,backdrop-filter] duration-300 ${
-        scrolled
-          ? "border-b border-line bg-bg/80 backdrop-blur-md supports-[backdrop-filter]:bg-bg/70"
-          : "border-b border-transparent bg-transparent"
-      }`}
-      style={{ height: scrolled ? 56 : 64 }}
-    >
-      <nav className="container-site flex h-full items-center justify-between" aria-label="Primary">
-        <div className="flex items-center gap-4">
+    <LazyMotion features={loadFeatures} strict>
+      <header className="pointer-events-none fixed inset-x-0 top-0 z-50 flex justify-center px-3 pt-3 md:pt-4">
+        <nav
+          aria-label="Primary"
+          className={cn(
+            "glass glass-blur pointer-events-auto relative flex h-14 w-full max-w-[760px] items-center justify-between gap-2 overflow-hidden rounded-full pl-4 pr-2 transition-[background-color,box-shadow] duration-500",
+            scrolled ? "glass-strong" : ""
+          )}
+        >
           <Link
             href="/"
-            className="font-semibold tracking-[0.18em] text-fg transition-colors hover:text-accent"
+            className="group inline-flex items-center gap-2.5 rounded-full py-2 pr-2 text-[13px] font-semibold tracking-[0.24em] text-fg"
             aria-label={`${site.displayName} — home`}
           >
+            <Glint className="w-3 text-accent-soft transition-transform duration-700 ease-out-expo group-hover:rotate-90" />
             {site.shortName}
           </Link>
-          <span className="hidden items-center gap-2 rounded-full border border-line bg-bg-2/70 px-2.5 py-1 font-mono text-[11px] text-fg-muted sm:inline-flex">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-ok opacity-60 node-pulse" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-ok" />
-            </span>
-            {site.status}
-          </span>
-        </div>
 
-        {/* Desktop */}
-        <ul className="hidden items-center gap-1 md:flex">
-          {navLinks.map((l) => {
-            const on = isActive(l.id);
-            return (
-              <li key={l.id}>
-                <Link
-                  href={l.href}
-                  aria-current={on ? "true" : undefined}
-                  className={`relative rounded-md px-3 py-2 text-sm transition-colors ${
-                    on ? "text-fg" : "text-fg-muted hover:text-fg"
-                  }`}
+          <ul className="hidden items-center md:flex">
+            {navLinks.map((l) => {
+              const on = isHome && active === l.id;
+              return (
+                <li key={l.id} className="relative">
+                  {on && (
+                    <m.span
+                      layoutId="nav-pill"
+                      transition={reduce ? { duration: 0 } : { type: "spring", stiffness: 380, damping: 34 }}
+                      className="absolute inset-0 rounded-full border border-fg/10 bg-fg/[0.06]"
+                    />
+                  )}
+                  <AnchorLink
+                    href={l.href}
+                    ariaCurrent={on ? "true" : undefined}
+                    className={cn(
+                      "relative block rounded-full px-3.5 py-2 text-[13px] transition-colors duration-300",
+                      on ? "text-fg" : "text-fg-muted hover:text-fg"
+                    )}
+                  >
+                    {l.label}
+                  </AnchorLink>
+                </li>
+              );
+            })}
+          </ul>
+
+          <div className="flex items-center gap-1.5">
+            <Link
+              href="/resume"
+              className={cn(
+                "hidden h-10 items-center rounded-full px-4 text-[13px] font-medium transition-colors sm:inline-flex",
+                pathname === "/resume" ? "bg-fg text-bg" : "bg-fg/90 text-bg hover:bg-white"
+              )}
+            >
+              Résumé
+            </Link>
+            <button
+              ref={toggle}
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-fg/10 text-fg-muted transition-colors hover:text-fg md:hidden"
+              onClick={() => setOpen((v) => !v)}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+              aria-label={open ? "Close menu" : "Open menu"}
+            >
+              {open ? <Close size={18} /> : <Menu size={18} />}
+            </button>
+          </div>
+
+          <span
+            ref={progress}
+            aria-hidden
+            style={{ transform: "scaleX(0)" }}
+            className={cn(
+              "absolute inset-x-6 bottom-0 h-px origin-left bg-gradient-to-r from-warm via-accent to-lavender transition-opacity duration-500",
+              scrolled && !open ? "opacity-80" : "opacity-0"
+            )}
+          />
+        </nav>
+      </header>
+
+      <AnimatePresence>
+        {open ? (
+          <m.div
+            id="mobile-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
+            transition={{ duration: 0.45, ease: EASE }}
+            className="fixed inset-0 z-40 flex flex-col justify-between overflow-y-auto overflow-x-hidden bg-night px-6 pb-10 pt-28 md:hidden"
+            data-lenis-prevent
+          >
+            <Glow tone="blue" className="-right-40 -top-40 w-[520px]" />
+            <Glow tone="warm" className="-bottom-48 -left-40 w-[520px] [--glow-opacity:0.4]" />
+            <ul className="relative flex flex-col">
+              {[...navLinks, { label: "Résumé", href: "/resume", id: "resume" }].map((l, i) => (
+                <m.li
+                  key={l.id}
+                  initial={reduce ? false : { opacity: 0, y: 22 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.05 * i, ease: EASE }}
+                  className="border-b border-fg/10"
                 >
-                  {l.label}
-                  <span
-                    aria-hidden
-                    className={`absolute inset-x-3 -bottom-px h-px bg-accent transition-opacity ${
-                      on ? "opacity-100" : "opacity-0"
-                    }`}
-                  />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
-        {/* Mobile toggle */}
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-fg-muted hover:text-fg md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <Close size={18} /> : <Menu size={18} />}
-        </button>
-      </nav>
-
-      {/* Mobile panel */}
-      <div
-        id="mobile-nav"
-        hidden={!open}
-        className="border-b border-line bg-bg/95 backdrop-blur-md md:hidden"
-      >
-        <ul className="container-site flex flex-col py-3">
-          {navLinks.map((l) => (
-            <li key={l.id}>
-              <Link
-                href={l.href}
-                onClick={() => setOpen(false)}
-                aria-current={isActive(l.id) ? "true" : undefined}
-                className={`block rounded-md px-2 py-3 text-base ${
-                  isActive(l.id) ? "text-fg" : "text-fg-muted"
-                }`}
-              >
-                {l.label}
-              </Link>
-            </li>
-          ))}
-          <li className="mt-2 border-t border-line pt-3 font-mono text-[11px] text-fg-dim sm:hidden">
-            <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ok align-middle" />
-            {site.status}
-          </li>
-        </ul>
-      </div>
-    </header>
+                  {l.href.startsWith("/#") ? (
+                    <AnchorLink
+                      href={l.href}
+                      onNavigate={() => setOpen(false)}
+                      className="flex items-baseline justify-between py-4 font-display text-4xl font-semibold uppercase tracking-tightest text-fg"
+                    >
+                      {l.label}
+                      <span className="hud">{String(i + 1).padStart(2, "0")}</span>
+                    </AnchorLink>
+                  ) : (
+                    <Link
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className="flex items-baseline justify-between py-4 font-display text-4xl font-semibold uppercase tracking-tightest text-fg"
+                    >
+                      {l.label}
+                      <span className="hud">{String(i + 1).padStart(2, "0")}</span>
+                    </Link>
+                  )}
+                </m.li>
+              ))}
+            </ul>
+            <div className="relative mt-10 flex flex-col gap-3">
+              <a href={`mailto:${site.email}`} className="text-base text-fg-muted transition-colors hover:text-fg">
+                {site.email}
+              </a>
+              <p className="hud">
+                <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ok align-middle" />
+                {site.availability} · {site.location}
+              </p>
+            </div>
+          </m.div>
+        ) : null}
+      </AnimatePresence>
+    </LazyMotion>
   );
 }

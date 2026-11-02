@@ -6,9 +6,15 @@ export const site = {
   fullName: "Mohammed Iqram Patel",
   displayName: "Iqram Patel",
   shortName: "IQRAM",
-  role: "Software Engineer",
-  /** The CV headline: role · focus areas. */
-  supporting: ["Full-Stack", "API Integration", "AI"],
+  role: "AI Engineer",
+  supporting: ["Software & Intelligent Systems"],
+  /** The hero identity line. */
+  identity: "AI Engineer | Software & Intelligent Systems",
+  headline: "I build intelligent systems.",
+  intro:
+    "I design and engineer intelligent applications, scalable backend systems and digital products — from architecture to deployment.",
+  /** Mumbai, for the HUD readout. */
+  coordinates: "19.0760° N · 72.8777° E",
   experienceYears: "3+",
   location: "Mumbai, India",
   status: "Open to opportunities",
@@ -23,16 +29,15 @@ export const site = {
   url: "https://iqram-portfolio.vercel.app",
   resumeFile: "/Iqram_Patel_CV.pdf",
   resumeDownloadName: "Iqram_Patel_CV.pdf",
-  title: "Iqram Patel — Software Engineer · Full-Stack · API Integration · AI",
+  title: "Iqram Patel — AI Engineer | Software & Intelligent Systems",
   description:
-    "Iqram Patel is a Mumbai-based software engineer with 3+ years shipping full-stack products, enterprise API gateway integrations for banking clients, and an LLM agent that diagnoses Kong Gateway through a custom MCP server.",
+    "Iqram Patel is a Mumbai-based AI and software engineer with 3+ years shipping full-stack products, enterprise API gateway integrations for banking clients, and an LLM agent that diagnoses Kong Gateway through a custom MCP server.",
 } as const;
 
 export const navLinks = [
   { label: "Work", href: "/#work", id: "work" },
   { label: "Experience", href: "/#experience", id: "experience" },
-  { label: "Skills", href: "/#skills", id: "skills" },
+  { label: "Expertise", href: "/#expertise", id: "expertise" },
   { label: "About", href: "/#about", id: "about" },
-  { label: "Resume", href: "/resume", id: "resume" },
   { label: "Contact", href: "/#contact", id: "contact" },
 ] as const;

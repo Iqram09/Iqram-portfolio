@@ -1,44 +1,48 @@
 import Link from "next/link";
-import { site } from "@/data/site";
+import { navLinks, site } from "@/data/site";
+import AnchorLink from "@/components/ui/AnchorLink";
+import Glint from "@/components/brand/Glint";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-line py-10">
-      <div className="container-site flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-sm font-medium text-fg">{site.displayName}</p>
-          <p className="mt-0.5 text-sm text-fg-muted">{[site.role, ...site.supporting].join(" · ")}</p>
-          <p className="mt-0.5 font-mono text-xs text-fg-dim">{site.location}</p>
+    <footer className="relative bg-night py-12">
+      <div className="container-site">
+        <div className="flex flex-col gap-10 border-t border-line pt-10 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="inline-flex items-center gap-2.5 text-sm font-semibold tracking-[0.24em] text-fg">
+              <Glint className="w-3 text-accent-soft" /> {site.shortName}
+            </p>
+            <p className="mt-3 text-sm text-fg-muted">{site.identity}</p>
+            <p className="hud mt-2">
+              {site.location} · {site.coordinates}
+            </p>
+          </div>
+
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-14 gap-y-2 text-sm sm:grid-cols-3">
+            {navLinks.map((l) => (
+              <AnchorLink key={l.id} href={l.href} className="text-fg-muted transition-colors hover:text-fg">
+                {l.label}
+              </AnchorLink>
+            ))}
+            <Link href="/resume" className="text-fg-muted transition-colors hover:text-fg">
+              Résumé
+            </Link>
+            <a href={site.github} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
+              GitHub
+            </a>
+            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
+              LinkedIn
+            </a>
+            <a href={`mailto:${site.email}`} className="text-fg-muted transition-colors hover:text-fg">
+              Email
+            </a>
+          </nav>
         </div>
 
-        <nav aria-label="Footer">
-          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            <li>
-              <a href={site.github} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
-                LinkedIn
-              </a>
-            </li>
-            <li>
-              <a href={`mailto:${site.email}`} className="text-fg-muted transition-colors hover:text-fg">
-                Email
-              </a>
-            </li>
-            <li>
-              <Link href="/resume" className="text-fg-muted transition-colors hover:text-fg">
-                Resume
-              </Link>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div className="container-site mt-8 flex flex-col gap-2 border-t border-line pt-6 font-mono text-[11px] text-fg-dim sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 {site.displayName}</p>
-        <p>Next.js · TypeScript · Tailwind CSS</p>
+        <div className="hud mt-12 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 {site.fullName}</p>
+          <p>Next.js · TypeScript · GSAP · Framer Motion · Lenis</p>
+        </div>
       </div>
     </footer>
   );

@@ -61,8 +61,8 @@ export default function ArchitectureDiagram() {
               {i < architectureSpine.length - 1 && (
                 <div className="flex h-7 items-center justify-center" aria-hidden>
                   <svg width="2" height="28" className="overflow-visible">
-                    <line x1="1" y1="0" x2="1" y2="28" stroke="#2B2B37" strokeWidth="2" />
-                    <line x1="1" y1="0" x2="1" y2="28" stroke="#38BDF8" strokeWidth="2" className="edge-flow" opacity="0.7" />
+                    <line x1="1" y1="0" x2="1" y2="28" stroke="#35303A" strokeWidth="2" />
+                    <line x1="1" y1="0" x2="1" y2="28" stroke="#9CC3F0" strokeWidth="2" className="edge-flow" opacity="0.7" />
                   </svg>
                 </div>
               )}
@@ -71,7 +71,7 @@ export default function ArchitectureDiagram() {
           <li className="mt-7" aria-label="Kong entities">
             <div className="flex h-7 items-center justify-center" aria-hidden>
               <svg width="2" height="28">
-                <line x1="1" y1="0" x2="1" y2="28" stroke="#2B2B37" strokeWidth="2" strokeDasharray="3 4" />
+                <line x1="1" y1="0" x2="1" y2="28" stroke="#35303A" strokeWidth="2" strokeDasharray="3 4" />
               </svg>
             </div>
             <ul className="grid grid-cols-5 gap-1.5">

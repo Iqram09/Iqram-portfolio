@@ -3,8 +3,13 @@ export type ClientEngagement = {
   url: string;
   domain: string;
   sector: string;
+  /** What was delivered, in the CV's words. */
+  role: string;
+  year: string;
   summary: string;
   technologies: string[];
+  /** A capture of the live homepage (1600×900). */
+  image: { src: string; w: number; h: number; alt: string };
 };
 
 export type Experience = {
@@ -28,6 +33,14 @@ export const clients: ClientEngagement[] = [
     url: "https://stansbuildtech.com",
     domain: "stansbuildtech.com",
     sector: "Real estate developer · Mumbai",
+    role: "Website + full backend",
+    year: "2026",
+    image: {
+      src: "/work/stans-buildtech.jpg",
+      w: 1600,
+      h: 900,
+      alt: "The live stansbuildtech.com homepage: the Vantage residential tower at dusk on a Mumbai street, under the site navigation.",
+    },
     summary:
       "Built the site and the full backend in Next.js and TypeScript: enquiry and careers APIs on PostgreSQL (moved from Docker to Supabase) and Cloudflare R2 storage.",
     technologies: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "Cloudflare R2"],
@@ -37,6 +50,14 @@ export const clients: ClientEngagement[] = [
     url: "https://www.proximoshirts.com",
     domain: "proximoshirts.com",
     sector: "D2C menswear brand",
+    role: "Shopify storefront",
+    year: "2026",
+    image: {
+      src: "/work/proximo.jpg",
+      w: 1600,
+      h: 900,
+      alt: "The live proximoshirts.com homepage: a striped shirt and pinstripe trousers on a warm backdrop, under the Proximo navigation.",
+    },
     summary: "Launched a Shopify storefront for the brand on a customised theme.",
     technologies: ["Shopify", "Theme customisation"],
   },

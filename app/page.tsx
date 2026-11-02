@@ -1,29 +1,32 @@
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import MetricStrip from "@/components/MetricStrip";
-import FeaturedProject from "@/components/FeaturedProject";
-import ClientWork from "@/components/ClientWork";
+import Hero from "@/components/hero/Hero";
+import Intro from "@/components/home/Intro";
+import FeaturedWork from "@/components/home/FeaturedWork";
+import ClientWork from "@/components/home/ClientWork";
 import LiveSystem from "@/components/LiveSystem";
 import ExperienceTimeline from "@/components/ExperienceTimeline";
-import OtherWork from "@/components/OtherWork";
-import SkillGroups from "@/components/SkillGroups";
+import Expertise from "@/components/home/Expertise";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 
+/**
+ * The reel, in nine scenes: hero → introduction → featured AI system →
+ * client work → system architecture → experience → expertise → about →
+ * contact.
+ */
 export default function Home() {
   return (
     <>
       <Navbar />
       <main id="main" className="flex-1">
         <Hero />
-        <MetricStrip />
-        <FeaturedProject />
+        <Intro />
+        <FeaturedWork />
         <ClientWork />
         <LiveSystem />
         <ExperienceTimeline />
-        <OtherWork />
-        <SkillGroups />
+        <Expertise />
         <AboutSection />
         <ContactSection />
       </main>

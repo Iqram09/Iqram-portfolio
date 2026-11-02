@@ -4,49 +4,74 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./data/**/*.{js,ts}",
+    "./lib/**/*.{js,ts}",
   ],
   theme: {
     extend: {
+      /*
+       * "Distant Glass". Token names are kept from the previous system so the
+       * case study and résumé pages inherit the new palette unchanged.
+       * Text tokens clear WCAG AA on bg and night:
+       *   fg #D9CFC9 13.9:1 · muted #9E9FB3 7.9:1 · dim #7A7B8F 5.0:1
+       */
       colors: {
-        // Surfaces — near-black to graphite, one step apart.
+        // Warm black ground and three lifted surfaces.
         bg: {
-          DEFAULT: "#050507",
-          1: "#0A0A0E",
-          2: "#101015",
-          3: "#15151C",
+          DEFAULT: "#050200",
+          1: "#0A0807",
+          2: "#100D0C",
+          3: "#171312",
         },
-        // Fine borders.
+        // Navy-black ground for the "system" sections.
+        night: {
+          DEFAULT: "#020309",
+          1: "#060914",
+          2: "#0B1020",
+        },
+        // Glass tint — always used with alpha.
+        glass: "#26324D",
         line: {
-          DEFAULT: "#1E1E27",
-          strong: "#2B2B37",
+          DEFAULT: "#221E20",
+          strong: "#35303A",
         },
-        // Text.
         fg: {
-          DEFAULT: "#F4F4F5",
-          muted: "#A1A1AA",
-          dim: "#6B6B76",
+          DEFAULT: "#D9CFC9",
+          muted: "#9E9FB3",
+          dim: "#7A7B8F",
         },
-        // One accent family: electric blue/cyan with a violet relation.
+        // Glacier blue — the light inside the glass.
         accent: {
-          DEFAULT: "#38BDF8",
-          soft: "#7DD3FC",
-          deep: "#0EA5E9",
+          DEFAULT: "#9CC3F0",
+          soft: "#C6DCF7",
+          deep: "#6F9BD6",
         },
-        violet: "#818CF8",
-        ok: "#34D399",
-        warn: "#FBBF24",
-        err: "#F87171",
+        // Warm accent — hairlines and fills; `soft` for text (5.6:1).
+        warm: {
+          DEFAULT: "#845C40",
+          soft: "#C49A76",
+        },
+        mint: "#BDE7D9",
+        lavender: "#C9B8FF",
+        violet: "#B8A9F0",
+        ok: "#8ED9BE",
+        warn: "#E3B873",
+        err: "#E8907F",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       maxWidth: {
-        site: "1240px",
+        site: "1320px",
         prose: "720px",
       },
       letterSpacing: {
-        tightest: "-0.04em",
+        tightest: "-0.045em",
+        hud: "0.22em",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       keyframes: {
         "fade-up": {
@@ -68,16 +93,10 @@ module.exports = {
           "0%, 49%": { opacity: "1" },
           "50%, 100%": { opacity: "0" },
         },
-        travel: {
-          "0%": { offsetDistance: "0%", opacity: "0" },
-          "8%": { opacity: "1" },
-          "92%": { opacity: "1" },
-          "100%": { offsetDistance: "100%", opacity: "0" },
-        },
       },
       animation: {
-        "fade-up": "fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both",
-        "fade-in": "fade-in 0.5s ease-out both",
+        "fade-up": "fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "fade-in": "fade-in 0.8s ease-out both",
         flow: "flow 1.6s linear infinite",
         "pulse-dot": "pulse-dot 2.4s ease-in-out infinite",
         caret: "caret 1.1s steps(1) infinite",

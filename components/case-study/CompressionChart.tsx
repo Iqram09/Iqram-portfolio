@@ -1,6 +1,6 @@
 import { contextMeasurements, routeMeasurements, contextMechanisms } from "@/data/kong";
 
-const fill = { dim: "#2B2B37", muted: "#6B6B76", accent: "#38BDF8" } as const;
+const fill = { dim: "#35303A", muted: "#7A7B8F", accent: "#9CC3F0" } as const;
 
 export default function CompressionChart() {
   const max = contextMeasurements[0].bytes;
@@ -30,7 +30,7 @@ export default function CompressionChart() {
                   </div>
                 </div>
                 <svg viewBox="0 0 100 6" preserveAspectRatio="none" className="mt-2 h-2.5 w-full min-w-0" width="100%" role="img" aria-label={`${m.label}: ${m.bytes.toLocaleString()} bytes, ${Math.round(pct)} percent of the raw dump`}>
-                  <rect x="0" y="0" width="100" height="6" rx="1" fill="#15151C" />
+                  <rect x="0" y="0" width="100" height="6" rx="1" fill="#171312" />
                   <rect x="0" y="0" width={pct} height="6" rx="1" fill={fill[m.tone]} />
                 </svg>
               </li>
@@ -45,8 +45,8 @@ export default function CompressionChart() {
               <div className="mt-1 flex items-center gap-3">
                 <span className="font-mono text-lg tabular-nums text-fg">{r.bytes} B</span>
                 <svg viewBox="0 0 100 6" preserveAspectRatio="none" className="h-2 w-full min-w-0 flex-1" width="100%" aria-hidden>
-                  <rect x="0" y="0" width="100" height="6" rx="1" fill="#15151C" />
-                  <rect x="0" y="0" width={(r.bytes / routeMeasurements[0].bytes) * 100} height="6" rx="1" fill={i === 0 ? "#2B2B37" : "#38BDF8"} />
+                  <rect x="0" y="0" width="100" height="6" rx="1" fill="#171312" />
+                  <rect x="0" y="0" width={(r.bytes / routeMeasurements[0].bytes) * 100} height="6" rx="1" fill={i === 0 ? "#35303A" : "#9CC3F0"} />
                 </svg>
               </div>
             </div>

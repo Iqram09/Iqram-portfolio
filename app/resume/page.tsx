@@ -87,9 +87,10 @@ export default function ResumePage() {
                   </a>
                 </div>
                 <object
+                  data-lenis-prevent
                   data={`${pdf}#view=FitH&toolbar=0&navpanes=0`}
                   type="application/pdf"
-                  className="block h-[70vh] w-full bg-[#1a1a1f] md:h-[82vh]"
+                  className="block h-[70vh] w-full bg-night-1 md:h-[82vh]"
                   aria-label={`PDF preview of ${site.displayName} resume`}
                 >
                   {/* Fallback when the browser cannot embed PDFs (common on mobile). */}

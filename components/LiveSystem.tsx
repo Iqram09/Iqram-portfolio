@@ -3,7 +3,9 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import AgentConsole, { type Stage } from "@/components/AgentConsole";
-import SectionHeader from "@/components/ui/SectionHeader";
+import SceneHeader from "@/components/home/SceneHeader";
+import Glow from "@/components/brand/Glow";
+import Viewfinder from "@/components/brand/Viewfinder";
 import { kong } from "@/data/kong";
 import { ArrowRight } from "@/components/ui/Icons";
 
@@ -84,24 +86,28 @@ export default function LiveSystem() {
   const node = flow.find((n) => n.id === shown) ?? flow[1];
 
   return (
-    <section className="border-t border-line py-20 md:py-28" aria-labelledby="live-title">
-      <div className="container-site">
-        <SectionHeader
-          index="03"
-          eyebrow="Inside the AI project · Interactive"
+    <section id="system" className="relative overflow-hidden bg-night py-28 md:py-40" aria-labelledby="live-title">
+      <div aria-hidden className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-bg to-transparent" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent" />
+      <Glow tone="blue" drift className="-right-[20rem] top-[20%] w-[900px] [--glow-opacity:0.22]" />
+      <Glow tone="lavender" className="-left-[18rem] bottom-[10%] w-[640px] [--glow-opacity:0.08]" />
+      <div className="container-site relative">
+        <SceneHeader
+          index="05"
+          label="System architecture"
           id="live-title"
-          title="Live system"
-          lede="How a question becomes a diagnosis. Watch the recorded run stream through each layer, or select a layer to read what it owns."
+          title="How a question becomes a diagnosis"
+          lede="Watch the recorded Kong run stream through each layer, or select a layer to read what it owns."
           aside={
-            <span className="font-mono text-[11px] text-fg-dim">
-              frontend simulation · replayed from a recorded run · no live gateway
+            <span className="hud block max-w-[16rem] leading-relaxed lg:text-right">
+              Frontend simulation · replayed from a recorded run · no live gateway
             </span>
           }
         />
 
         {/* Flow */}
         <ol
-          className="mt-12 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7 lg:gap-0"
+          className="mt-16 grid grid-cols-2 gap-2 sm:grid-cols-4 md:mt-20 lg:grid-cols-7 lg:gap-0"
           aria-label="System flow"
         >
           {flow.map((n, i) => {
@@ -119,12 +125,12 @@ export default function LiveSystem() {
                   type="button"
                   onClick={() => setSelected((s) => (s === n.id ? null : n.id))}
                   aria-pressed={isSelected}
-                  className={`lift group relative w-full rounded-lg border bg-bg-1 px-3 py-3 text-left lg:rounded-none lg:border-y lg:border-l lg:border-r-0 lg:first:rounded-l-lg lg:last:rounded-r-lg lg:last:border-r ${
+                  className={`lift group relative w-full rounded-lg border bg-night-1/80 px-3 py-3.5 text-left lg:rounded-none lg:border-y lg:border-l lg:border-r-0 lg:first:rounded-l-lg lg:last:rounded-r-lg lg:last:border-r ${
                     isSelected
-                      ? "border-accent/70 bg-bg-2"
+                      ? "border-accent/60 bg-night-2"
                       : isActive
-                        ? "border-line-strong bg-bg-2"
-                        : "border-line hover:bg-bg-2"
+                        ? "border-line-strong bg-night-2"
+                        : "border-fg/[0.07] hover:bg-night-2"
                   }`}
                 >
                   <span className="flex items-center justify-between gap-2">
@@ -142,7 +148,7 @@ export default function LiveSystem() {
                 {i < flow.length - 1 && (
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute -right-1.5 top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-line-strong bg-bg-1 lg:block"
+                    className="pointer-events-none absolute -right-1.5 top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-line-strong bg-night-1 lg:block"
                   />
                 )}
               </li>
@@ -156,13 +162,14 @@ export default function LiveSystem() {
           </div>
 
           {/* Explanation */}
-          <aside className="flex flex-col rounded-lg border border-line bg-bg-1 p-6 lg:col-span-5" aria-live="polite">
+          <aside className="glass relative flex flex-col overflow-hidden rounded-xl p-6 md:p-8 lg:col-span-5" aria-live="polite">
+            <Viewfinder inset="inset-3" />
             <div className="flex items-center justify-between">
               <span className="label-mono">layer</span>
               <span className="font-mono text-[11px] text-fg-dim">{selected ? "selected" : active === "idle" ? "default" : "following run"}</span>
             </div>
             <h3
-              className={`mt-3 text-2xl font-semibold tracking-tight ${
+              className={`display mt-4 text-4xl ${
                 node.tone === "model" ? "text-violet" : node.tone === "accent" ? "text-accent" : "text-fg"
               }`}
             >

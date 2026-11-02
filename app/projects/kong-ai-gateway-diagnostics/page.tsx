@@ -81,7 +81,7 @@ export default function KongCaseStudy() {
       <main id="main" className="flex-1">
         {/* Header */}
         <header className="relative overflow-hidden border-b border-line pt-[calc(var(--nav-h)+40px)] pb-12 md:pt-[calc(var(--nav-h)+64px)] md:pb-16">
-          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_20%_0%,rgba(56,189,248,0.10),transparent_70%)]" />
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(50%_60%_at_20%_0%,rgba(156,195,240,0.10),transparent_70%)]" />
           <div className="container-site relative">
             <Link href="/#work" className="inline-flex items-center gap-2 font-mono text-xs text-fg-muted transition-colors hover:text-fg">
               <ArrowLeft size={14} /> Back to portfolio

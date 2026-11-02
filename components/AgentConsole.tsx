@@ -146,6 +146,7 @@ export default function AgentConsole({ onStage, autoplay = true, className = "",
       >
         <div
           ref={bodyRef}
+          data-lenis-prevent
           className={`overflow-y-auto px-4 py-4 font-mono text-[12px] leading-[1.7] text-fg-muted sm:px-5 ${
             compact ? "h-[320px]" : "h-[340px] md:h-[460px]"
           }`}
