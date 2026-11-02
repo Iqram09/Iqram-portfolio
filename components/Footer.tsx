@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="container-site flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-medium text-fg">{site.displayName}</p>
-          <p className="mt-0.5 text-sm text-fg-muted">{site.role}</p>
+          <p className="mt-0.5 text-sm text-fg-muted">{[site.role, ...site.supporting].join(" · ")}</p>
           <p className="mt-0.5 font-mono text-xs text-fg-dim">{site.location}</p>
         </div>
 

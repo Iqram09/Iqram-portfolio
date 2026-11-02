@@ -1,20 +1,21 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
-import ProjectFilters from "@/components/ProjectFilters";
+import ProjectCard from "@/components/ProjectCard";
+import { projects } from "@/data/projects";
 import { site } from "@/data/site";
 import { ArrowUpRight } from "@/components/ui/Icons";
 
 export default function OtherWork() {
   return (
-    <section id="projects" className="border-t border-line bg-bg-1/40 py-20 md:py-28" aria-labelledby="projects-title">
+    <section id="projects" className="scroll-mt-20 border-t border-line bg-bg-1/40 py-20 md:py-28" aria-labelledby="projects-title">
       <div className="container-site">
         <Reveal>
           <SectionHeader
             index="05"
-            eyebrow="Selected work"
+            eyebrow="Projects"
             id="projects-title"
-            title="Other selected work"
-            lede="Earlier full-stack and data work, kept for the record. Kong remains the flagship."
+            title="Side projects"
+            lede="Mobile, web and data work built outside client engagements."
             aside={
               <a
                 href={site.github}
@@ -27,9 +28,14 @@ export default function OtherWork() {
             }
           />
         </Reveal>
-        <Reveal delay={80} className="mt-10">
-          <ProjectFilters />
-        </Reveal>
+
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {projects.map((p, i) => (
+            <Reveal key={p.slug} delay={i * 60} className="h-full">
+              <ProjectCard project={p} />
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

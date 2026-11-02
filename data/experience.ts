@@ -1,18 +1,60 @@
+export type ClientEngagement = {
+  name: string;
+  url: string;
+  domain: string;
+  sector: string;
+  summary: string;
+  technologies: string[];
+};
+
 export type Experience = {
   role: string;
   company: string;
-  companyShort?: string;
   location: string;
   start: string;
   end: string;
-  /** Renders the entry visually smaller (e.g. non-engineering roles). */
-  minor?: boolean;
+  /** Marks the role that is ongoing. */
+  current?: boolean;
+  /** Freelance roles list their clients instead of plain bullets. */
+  clients?: ClientEngagement[];
   summary: string[];
   technologies: string[];
 };
 
+/** Freelance client work — both sites are live. Copied from the CV, nothing added. */
+export const clients: ClientEngagement[] = [
+  {
+    name: "Stans Buildtech",
+    url: "https://stansbuildtech.com",
+    domain: "stansbuildtech.com",
+    sector: "Real estate developer · Mumbai",
+    summary:
+      "Built the site and the full backend in Next.js and TypeScript: enquiry and careers APIs on PostgreSQL (moved from Docker to Supabase) and Cloudflare R2 storage.",
+    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "Cloudflare R2"],
+  },
+  {
+    name: "Proximo",
+    url: "https://www.proximoshirts.com",
+    domain: "proximoshirts.com",
+    sector: "D2C menswear brand",
+    summary: "Launched a Shopify storefront for the brand on a customised theme.",
+    technologies: ["Shopify", "Theme customisation"],
+  },
+];
+
 /** Verified against the CV in /public. No metrics are invented. */
 export const experience: Experience[] = [
+  {
+    role: "Freelance Full-Stack Developer",
+    company: "Independent",
+    location: "Mumbai",
+    start: "Mar 2026",
+    end: "Present",
+    current: true,
+    clients,
+    summary: [],
+    technologies: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "Cloudflare R2", "Shopify"],
+  },
   {
     role: "Associate Consultant",
     company: "Allied Globetech",
@@ -20,37 +62,25 @@ export const experience: Experience[] = [
     start: "May 2025",
     end: "Feb 2026",
     summary: [
-      "Designed and integrated enterprise API gateway solutions using Kong, CA Layer7 and Apigee across multiple client projects, standardising authentication and service-integration patterns.",
-      "Built internal React / TypeScript / MongoDB reporting platforms that gave consulting teams visibility into project KPIs, replacing spreadsheet-based reporting.",
-      "Worked across requirements, implementation, testing, deployment and release sign-off with client stakeholders through Agile delivery cycles.",
+      "Integrated enterprise API gateways (Kong, CA Layer7, Apigee) across 3+ client projects, standardising authentication and cutting integration setup time for new services.",
+      "Worked on-site at a leading private-sector bank (client under NDA) on Broadcom Layer7 API integration around the Oracle FLEXCUBE core-banking platform, using Docker, Kubernetes and SQL.",
+      "Delivered Oracle WebLogic integration services, exposing and consuming REST and SOAP APIs (client under NDA).",
+      "Built React / TypeScript / MongoDB reporting dashboards with real-time KPI visibility, replacing manual spreadsheets.",
     ],
-    technologies: ["Kong", "CA Layer7", "Apigee", "React", "TypeScript", "MongoDB", "REST APIs"],
+    technologies: ["Kong", "Broadcom Layer7", "Apigee", "Oracle FLEXCUBE", "Oracle WebLogic", "Kubernetes", "Docker", "React", "MongoDB"],
   },
   {
     role: "Software Developer",
     company: "Take Solutions",
     location: "Mumbai",
-    start: "May 2024",
+    start: "Feb 2023",
     end: "Apr 2025",
     summary: [
-      "Built and maintained full-stack web applications across frontend, backend, API integration, testing and deployment.",
-      "Designed and consumed REST APIs supporting core application workflows, integrating frontend applications with backend services.",
-      "Participated across the delivery lifecycle — sprint planning, automated testing, CI/CD, deployment and production support.",
+      "Built and shipped scalable web applications end-to-end, from UI/UX prototypes to production deployment.",
+      "Designed and consumed REST APIs powering core application features across frontend and backend.",
+      "Worked in full Agile delivery cycles with sprint planning, automated testing, and CI/CD-based deployments.",
     ],
     technologies: ["React", "TypeScript", "Node.js", "REST APIs", "CI/CD"],
-  },
-  {
-    role: "Graphic Design Intern",
-    company: "Collective Heads Exp Mktg Sol Pvt Ltd",
-    companyShort: "Collective Heads",
-    location: "Mumbai",
-    start: "Oct 2023",
-    end: "Apr 2024",
-    minor: true,
-    summary: [
-      "Created visual assets, event designs and marketing collateral using Adobe Creative Suite.",
-    ],
-    technologies: ["Adobe Creative Suite"],
   },
 ];
 
@@ -61,8 +91,8 @@ export const education = {
 };
 
 export const learning = {
-  programme: "Data Science Bootcamp + Virtual Internship",
+  programme: "Data Science Foundation Bootcamp + Virtual Internship",
   provider: "Codebasics",
   status: "ongoing",
-  areas: ["Python", "Machine Learning", "Statistics", "EDA", "SQL"],
+  areas: ["Python", "Pandas", "NumPy", "Scikit-learn", "SQL", "EDA"],
 };

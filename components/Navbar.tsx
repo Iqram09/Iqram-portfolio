@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { navLinks, site } from "@/data/site";
 import { Menu, Close } from "@/components/ui/Icons";
 
-const SECTION_IDS = ["work", "experience", "about", "contact"] as const;
+const SECTION_IDS = ["work", "experience", "skills", "about", "contact"] as const;
 
 export default function Navbar() {
   const pathname = usePathname();

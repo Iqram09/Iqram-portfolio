@@ -152,21 +152,6 @@ body {
   .caret::after { animation: none; }
 }
 
-/* Packet travelling down the SystemGraph rail. */
-@keyframes travel-y {
-  0%   { top: 0; opacity: 0; }
-  6%   { opacity: 1; }
-  94%  { opacity: 1; }
-  100% { top: calc(100% - 7px); opacity: 0; }
-}
-.packet {
-  top: 0;
-  animation: travel-y 5.5s cubic-bezier(0.45, 0, 0.55, 1) infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .packet { display: none; }
-}
-
 /* Contact terminal — staged reveal once the panel is visible (Reveal adds .is-visible). */
 @keyframes term-type {
   from { width: 0; }

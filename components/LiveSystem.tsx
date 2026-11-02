@@ -87,8 +87,8 @@ export default function LiveSystem() {
     <section className="border-t border-line py-20 md:py-28" aria-labelledby="live-title">
       <div className="container-site">
         <SectionHeader
-          index="02"
-          eyebrow="Interactive"
+          index="03"
+          eyebrow="Inside the AI project · Interactive"
           id="live-title"
           title="Live system"
           lede="How a question becomes a diagnosis. Watch the recorded run stream through each layer, or select a layer to read what it owns."

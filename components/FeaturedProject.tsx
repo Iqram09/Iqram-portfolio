@@ -18,7 +18,7 @@ export default function FeaturedProject() {
         <Reveal>
           <SectionHeader
             index="01"
-            eyebrow="Featured work"
+            eyebrow="Featured work · AI engineering"
             id="featured-title"
             title={kong.title}
             lede={kong.subtitle}

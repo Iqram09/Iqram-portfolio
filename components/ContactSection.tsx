@@ -19,15 +19,15 @@ export default function ContactSection() {
       <div className="container-site grid gap-12 lg:grid-cols-12 lg:items-center">
         <Reveal className="lg:col-span-6">
           <div className="flex items-center gap-3">
-            <span className="section-index">10</span>
+            <span className="section-index">08</span>
             <span className="h-px w-6 bg-line-strong" aria-hidden />
             <span className="label-mono">Contact</span>
           </div>
           <h2 id="contact-title" className="mt-5 text-balance text-4xl font-semibold tracking-tightest text-fg md:text-5xl">
-            Have a system worth building?
+            Let&rsquo;s build something that ships.
           </h2>
           <p className="mt-5 max-w-md text-pretty text-lg leading-relaxed text-fg-muted">
-            Open to software engineering and AI engineering opportunities.
+            Open to full-time software engineering roles and freelance projects — full-stack, API integration or AI.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href={`mailto:${site.email}`}>

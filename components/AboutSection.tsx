@@ -1,70 +1,75 @@
 import SectionHeader from "@/components/ui/SectionHeader";
 import Reveal from "@/components/ui/Reveal";
+import Button from "@/components/ui/Button";
 import { site } from "@/data/site";
-import { kong } from "@/data/kong";
-import { Github, Linkedin } from "@/components/ui/Icons";
+import { education, learning } from "@/data/experience";
+import { ArrowRight, Download } from "@/components/ui/Icons";
 
 export default function AboutSection() {
   return (
-    <section id="about" className="scroll-mt-20 border-t border-line py-20 md:py-28" aria-labelledby="about-title">
+    <section id="about" className="scroll-mt-20 border-t border-line bg-bg-1/40 py-20 md:py-28" aria-labelledby="about-title">
       <div className="container-site grid gap-12 md:grid-cols-12">
         <Reveal className="md:col-span-7">
-          <SectionHeader index="09" eyebrow="About" id="about-title" title="About" />
+          <SectionHeader index="07" eyebrow="About" id="about-title" title="About" />
           <div className="mt-8 flex max-w-prose flex-col gap-5 text-pretty text-[17px] leading-relaxed text-fg-muted">
             <p>
-              I&rsquo;m a software engineer from Mumbai focused on building reliable software systems and
-              exploring AI platform engineering.
+              I&rsquo;m a full-stack and AI software engineer from Mumbai with {site.experienceYears} years of
+              shipping software end to end.
             </p>
             <p>
-              My work sits at the intersection of APIs, infrastructure, full-stack development and agentic AI.
-              At Allied Globetech that meant Kong, CA Layer7 and Apigee integrations for client projects; on my
-              own time it meant building an MCP server and evaluation harness around a real gateway.
+              I started at Take Solutions building web applications from prototype to production. At Allied
+              Globetech I moved into enterprise integration — Kong, Layer7 and Apigee gateways for client projects,
+              including on-site work at a leading private-sector bank around its Oracle FLEXCUBE core-banking
+              platform.
             </p>
             <p>
-              I&rsquo;m particularly interested in systems where AI capabilities are constrained by strong
-              interfaces, evaluated with real data and made observable enough to debug.
+              Today I freelance, building client websites with real backends, and I build AI systems where the model
+              is boxed in by strong interfaces — like an MCP server that lets an LLM agent diagnose Kong Gateway
+              without ever being able to change it.
             </p>
+          </div>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Button href="/resume">
+              View resume <ArrowRight size={15} />
+            </Button>
+            <Button href={site.resumeFile} variant="secondary" download={site.resumeDownloadName}>
+              <Download size={15} /> Download PDF
+            </Button>
           </div>
         </Reveal>
 
         <Reveal delay={80} className="md:col-span-5">
           <dl className="grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 md:grid-cols-1">
             <div className="bg-bg-1 p-5">
-              <dt className="label-mono">name</dt>
-              <dd className="mt-1.5 text-sm text-fg">{site.fullName}</dd>
+              <dt className="label-mono">education</dt>
+              <dd className="mt-1.5 text-sm font-medium text-fg">{education.degree}</dd>
+              <dd className="mt-0.5 font-mono text-xs text-fg-muted">
+                {education.institution} · {education.period}
+              </dd>
+            </div>
+            <div className="bg-bg-1 p-5">
+              <dt className="label-mono">learning</dt>
+              <dd className="mt-1.5 text-sm font-medium text-fg">{learning.programme}</dd>
+              <dd className="mt-0.5 font-mono text-xs text-fg-muted">
+                {learning.provider} · <span className="text-ok">{learning.status}</span>
+              </dd>
+              <dd className="mt-3 flex flex-wrap gap-1.5">
+                {learning.areas.map((a) => (
+                  <span key={a} className="rounded border border-line bg-bg-2 px-2 py-0.5 font-mono text-[11px] text-fg-muted">
+                    {a}
+                  </span>
+                ))}
+              </dd>
             </div>
             <div className="bg-bg-1 p-5">
               <dt className="label-mono">based in</dt>
               <dd className="mt-1.5 text-sm text-fg">{site.location}</dd>
             </div>
             <div className="bg-bg-1 p-5">
-              <dt className="label-mono">building toward</dt>
-              <dd className="mt-1.5 text-sm text-fg">AI platform engineering roles</dd>
-            </div>
-            <div className="bg-bg-1 p-5">
               <dt className="label-mono">currently</dt>
               <dd className="mt-1.5 text-sm text-fg">
                 <span className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-ok align-middle" aria-hidden />
-                {site.availability}
-              </dd>
-            </div>
-            <div className="bg-bg-1 p-5 sm:col-span-2 md:col-span-1">
-              <dt className="label-mono">elsewhere</dt>
-              <dd className="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm">
-                <a href={site.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-fg-muted hover:text-fg">
-                  <Github size={14} /> github.com/{site.githubHandle}
-                </a>
-                <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-fg-muted hover:text-fg">
-                  <Linkedin size={14} /> {site.linkedinHandle}
-                </a>
-              </dd>
-            </div>
-            <div className="bg-bg-1 p-5 sm:col-span-2 md:col-span-1">
-              <dt className="label-mono">proof of work</dt>
-              <dd className="mt-1.5 text-sm text-fg">
-                <a href={kong.repo} target="_blank" rel="noopener noreferrer" className="font-mono text-[13px] text-fg-muted hover:text-fg">
-                  {kong.repoName}
-                </a>
+                Freelancing · {site.availability.toLowerCase()}
               </dd>
             </div>
           </dl>

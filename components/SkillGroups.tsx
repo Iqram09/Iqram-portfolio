@@ -4,28 +4,35 @@ import { skillGroups } from "@/data/skills";
 
 export default function SkillGroups() {
   return (
-    <section className="border-t border-line bg-bg-1/40 py-20 md:py-28" aria-labelledby="skills-title">
+    <section id="skills" className="scroll-mt-20 border-t border-line py-20 md:py-28" aria-labelledby="skills-title">
       <div className="container-site">
         <Reveal>
           <SectionHeader
-            index="07"
+            index="06"
             eyebrow="Capabilities"
             id="skills-title"
             title="Skills"
-            lede="Grouped by where they get used. No percentages — those were never measurements."
+            lede="Grouped the way they appear on my CV. No percentages — those were never measurements."
           />
         </Reveal>
 
-        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-line bg-line md:grid-cols-6">
+        <div className="mt-12 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
           {skillGroups.map((g, i) => (
             <Reveal
               key={g.id}
               delay={i * 40}
-              className={`bg-bg p-6 ${g.span === 3 ? "md:col-span-3" : "md:col-span-2"}`}
+              className={`bg-bg p-6 ${i === skillGroups.length - 1 ? "sm:col-span-2 lg:col-span-3" : ""}`}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <h3 className="text-sm font-semibold text-fg">{g.label}</h3>
-                <span className="font-mono text-[10px] text-fg-dim">{g.tag}</span>
+                {g.inProgress ? (
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] text-warn">
+                    <span className="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden />
+                    in progress
+                  </span>
+                ) : (
+                  <span className="font-mono text-[10px] text-fg-dim">{g.tag}</span>
+                )}
               </div>
               <ul className="mt-4 flex flex-wrap gap-1.5">
                 {g.skills.map((s) => (
