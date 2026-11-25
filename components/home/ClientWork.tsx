@@ -1,138 +1,113 @@
 import Image from "next/image";
 import { clients } from "@/data/experience";
-import { projects } from "@/data/projects";
-import { site } from "@/data/site";
-import SceneHeader from "@/components/home/SceneHeader";
-import ClipReveal from "@/components/motion/ClipReveal";
+import SectionHead from "@/components/ui/SectionHead";
+import ScaleIn from "@/components/motion/ScaleIn";
+import HoverTag from "@/components/ui/HoverTag";
 import Reveal from "@/components/ui/Reveal";
-import Viewfinder from "@/components/brand/Viewfinder";
-import { ArrowUpRight, Github } from "@/components/ui/Icons";
+import { CircleArrow, Dot, DotList, Tag } from "@/components/ui/Bits";
+import { ArrowUpRight } from "@/components/ui/Icons";
 import { cn } from "@/lib/cn";
 
-/** Scene 04 — freelance client work (both sites live), then side projects. */
+/* How each live site is staged: a ground cropped from its own photography and a tilted browser. */
+const stage: Record<string, { ground: string; shade: string; browser: string; screen: string }> = {
+  "Stans Buildtech": {
+    ground: "/crops/stans-ground.jpg",
+    shade: "bg-[linear-gradient(180deg,rgba(24,32,54,0)_30%,rgba(24,32,54,.6))]",
+    browser: "left-[9%] top-[27%] w-[128%] -rotate-[7deg]",
+    screen: "bg-dusk",
+  },
+  Proximo: {
+    ground: "/crops/proximo-ground.jpg",
+    shade: "bg-[linear-gradient(180deg,rgba(92,58,34,0)_40%,rgba(92,58,34,.4))]",
+    browser: "left-[-26%] top-[44%] w-[118%] rotate-[6deg]",
+    screen: "bg-camel",
+  },
+};
+
+/** Freelance client work — both sites live. */
 export default function ClientWork() {
   return (
-    <section id="clients" className="relative bg-bg pb-28 pt-8 md:pb-40" aria-labelledby="clients-title">
+    <section id="clients" className="overflow-hidden bg-bg pb-24 pt-4 md:pb-36" aria-labelledby="clients-title">
       <div className="container-site">
-        <SceneHeader
-          index="04"
-          label="Client work"
+        <SectionHead
+          eyebrow="Client work"
           id="clients-title"
           title="Shipped for real clients"
           lede="Since March 2026 I've been building and launching websites for businesses — from the interface down to the database and storage."
           aside={
-            <span className="hud inline-flex items-center gap-2 text-fg-muted">
-              <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
+            <span className="inline-flex items-center gap-2 text-[15px] text-fg-muted">
+              <Dot pulse />
               {clients.length} sites live
             </span>
           }
         />
 
-        <ol className="mt-16 flex flex-col gap-24 md:mt-24 md:gap-36">
-          {clients.map((c, i) => {
-            const flip = i % 2 === 1;
+        <ol className="mt-14 grid gap-x-10 gap-y-20 md:mt-20 md:grid-cols-2 lg:gap-x-[10%]">
+          {clients.map((c) => {
+            const s = stage[c.name];
             return (
-              <li key={c.name} className="grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
-                {/* 16:9 preview. */}
-                <div className={cn("lg:col-span-8", flip && "lg:order-2 lg:col-start-5")}>
-                  <a
-                    href={c.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block"
-                  >
-                    <span className="sr-only">(opens in a new tab)</span>
-                    <ClipReveal className="aspect-video bg-night" radius={24}>
-                      <Image
-                        src={c.image.src}
-                        alt={c.image.alt}
-                        fill
-                        sizes="(min-width: 1320px) 860px, (min-width: 1024px) 64vw, 92vw"
-                        className="object-cover transition-transform duration-[1400ms] ease-out-expo group-hover:scale-[1.03]"
-                      />
-                      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-bg/70 via-transparent to-bg/10" />
-                      <Viewfinder inset="inset-4 md:inset-6" />
-                      {/* Glass overlay: the live address. */}
-                      <div className="glass glass-blur glass-strong absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-full py-2 pl-4 pr-2 md:bottom-6 md:left-6 md:right-auto md:min-w-[340px]">
-                        <span className="flex min-w-0 items-center gap-2 font-mono text-[11px] text-fg-muted">
-                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-ok" aria-hidden />
-                          <span className="truncate">https://{c.domain}</span>
-                        </span>
-                        <span className="inline-flex h-8 items-center gap-1.5 rounded-full bg-fg px-3 text-[12px] font-medium text-bg transition-colors group-hover:bg-white">
-                          Visit <ArrowUpRight size={13} />
-                        </span>
-                      </div>
-                    </ClipReveal>
-                  </a>
-                </div>
+              <li key={c.name}>
+                <a href={c.url} target="_blank" rel="noopener noreferrer" className="group block rounded-[4px]">
+                  <span className="sr-only">(opens in a new tab)</span>
+                  <ScaleIn>
+                    <HoverTag
+                      label={
+                        <>
+                          Visit <ArrowUpRight size={16} />
+                        </>
+                      }
+                    >
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-[4px] bg-dusk">
+                        <Image src={s.ground} alt="" fill quality={85} sizes="(min-width: 1280px) 540px, (min-width: 768px) 45vw, 92vw" className="object-cover" />
+                        <div aria-hidden className={cn("absolute inset-0", s.shade)} />
 
-                {/* Editorial copy. */}
-                <Reveal className={cn("lg:col-span-4", flip && "lg:order-1 lg:col-start-1")}>
-                  <p className="hud flex items-center gap-3">
-                    <span className="text-warm-soft">0{i + 1}</span>
-                    <span aria-hidden className="h-px w-8 bg-line-strong" />
-                    {c.sector}
-                  </p>
-                  <h3 className="display mt-5 text-[clamp(2.4rem,4.4vw,4.25rem)] text-fg">{c.name}</h3>
-                  <dl className="mt-7 grid grid-cols-2 gap-4 border-y border-line py-4 font-mono text-[11px]">
+                        {/* The live homepage, in a browser. */}
+                        <div className={cn("absolute", s.browser)}>
+                          <div className={cn("overflow-hidden rounded-lg shadow-[0_50px_90px_-30px_rgba(0,0,0,.7)] transition-transform duration-[1200ms] ease-out-expo group-hover:-translate-y-3 group-hover:scale-[1.03]", s.screen)}>
+                            <div className="flex h-7 items-center gap-1.5 bg-bg-1 px-3" aria-hidden>
+                              <i className="h-2 w-2 rounded-full bg-bg-3" />
+                              <i className="h-2 w-2 rounded-full bg-bg-3" />
+                              <i className="h-2 w-2 rounded-full bg-bg-3" />
+                            </div>
+                            <Image
+                              src={c.image.src}
+                              alt={c.image.alt}
+                              width={c.image.w}
+                              height={c.image.h}
+                              quality={90}
+                              // Wider than its box (128% of the card): a tilted capture needs spare pixels to stay crisp.
+                              sizes="(min-width: 1280px) 960px, (min-width: 768px) 80vw, 140vw"
+                              className="w-full"
+                            />
+                          </div>
+                        </div>
+
+                        <Tag className="absolute left-4 top-4 md:left-5 md:top-5">https://{c.domain}</Tag>
+                      </div>
+                    </HoverTag>
+                  </ScaleIn>
+
+                  <Reveal className="mt-6 flex items-start justify-between gap-4">
                     <div>
-                      <dt className="hud">Delivered</dt>
-                      <dd className="mt-1 text-fg">{c.role}</dd>
+                      <h3 className="text-[28px] font-medium leading-tight tracking-[-0.03em] md:text-[32px]">{c.name}</h3>
+                      <p className="dots mt-1 text-[17px] tracking-[-0.015em] text-fg-dim">
+                        <span>{c.sector.split(" · ")[0]}</span>
+                        {c.sector.split(" · ")[1] ? <span>{c.sector.split(" · ")[1]}</span> : null}
+                        <span>{c.role}</span>
+                        <span>{c.year}</span>
+                      </p>
                     </div>
-                    <div>
-                      <dt className="hud">Year</dt>
-                      <dd className="mt-1 text-fg">{c.year}</dd>
-                    </div>
-                  </dl>
-                  <p className="mt-6 text-pretty text-[16px] leading-relaxed text-fg-muted">{c.summary}</p>
-                  <ul className="mt-6 flex flex-wrap gap-x-4 gap-y-2" aria-label="Technologies">
-                    {c.technologies.map((t) => (
-                      <li key={t} className="hud text-fg-muted">
-                        {t}
-                      </li>
-                    ))}
-                  </ul>
+                    <CircleArrow className="mt-1" />
+                  </Reveal>
+                </a>
+                <Reveal delay={80}>
+                  <p className="mt-5 max-w-[52ch] text-pretty text-[17px] leading-[1.5] tracking-[-0.01em]">{c.summary}</p>
+                  <DotList items={c.technologies} label="Technologies" className="mt-4" />
                 </Reveal>
               </li>
             );
           })}
         </ol>
-
-        {/* Side projects. */}
-        <Reveal className="mt-28 md:mt-40">
-          <div className="flex items-end justify-between gap-6 border-b border-line pb-5">
-            <h3 className="display text-3xl text-fg md:text-4xl">Also built</h3>
-            <a
-              href={site.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hud inline-flex items-center gap-1.5 text-fg-muted transition-colors hover:text-fg"
-            >
-              github.com/{site.githubHandle} <ArrowUpRight size={12} />
-            </a>
-          </div>
-          <ul>
-            {projects.map((p) => (
-              <li key={p.slug} className="border-b border-line">
-                <a
-                  href={p.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group grid items-baseline gap-2 py-6 transition-colors md:grid-cols-12 md:gap-6"
-                >
-                  <span className="hud md:col-span-1">{p.category}</span>
-                  <span className="text-xl font-medium tracking-tight text-fg md:col-span-4">
-                    {p.title} <span className="text-fg-dim">— {p.subtitle}</span>
-                  </span>
-                  <span className="text-pretty text-sm leading-relaxed text-fg-muted md:col-span-5">{p.description}</span>
-                  <span className="inline-flex items-center gap-1.5 text-sm text-fg-muted transition-colors group-hover:text-fg md:col-span-2 md:justify-end">
-                    <Github size={14} /> Source <ArrowUpRight size={13} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
       </div>
     </section>
   );

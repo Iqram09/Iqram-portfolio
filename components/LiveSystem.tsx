@@ -3,11 +3,10 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import AgentConsole, { type Stage } from "@/components/AgentConsole";
-import SceneHeader from "@/components/home/SceneHeader";
-import Glow from "@/components/brand/Glow";
-import Viewfinder from "@/components/brand/Viewfinder";
+import SectionHead from "@/components/ui/SectionHead";
 import { kong } from "@/data/kong";
-import { ArrowRight } from "@/components/ui/Icons";
+import { ArrowRight, Plus } from "@/components/ui/Icons";
+import { cn } from "@/lib/cn";
 
 type FlowNode = {
   id: Exclude<Stage, "idle" | "done">;
@@ -72,9 +71,12 @@ const flow: FlowNode[] = [
   },
 ];
 
+const toneText = { model: "text-violet", accent: "text-accent", plain: "text-fg" } as const;
+
 /**
- * Homepage interactive: a miniature AI-infrastructure flow synchronised with a
- * replay of the recorded run. Frontend only — nothing here queries a gateway.
+ * The run, two ways: a replay of the recorded session, and the seven layers it
+ * passes through as a list that follows along. Frontend only — nothing here
+ * queries a gateway.
  */
 export default function LiveSystem() {
   const [active, setActive] = useState<Stage>("idle");
@@ -82,111 +84,87 @@ export default function LiveSystem() {
 
   const onStage = useCallback((s: Stage) => setActive(s), []);
 
+  // One layer is always open: the chosen one, else wherever the run has got to.
   const shown = selected ?? (active !== "idle" && active !== "done" ? active : "agent");
-  const node = flow.find((n) => n.id === shown) ?? flow[1];
 
   return (
-    <section id="system" className="relative overflow-hidden bg-night py-28 md:py-40" aria-labelledby="live-title">
-      <div aria-hidden className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-bg to-transparent" />
-      <div aria-hidden className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent" />
-      <Glow tone="blue" drift className="-right-[20rem] top-[20%] w-[900px] [--glow-opacity:0.22]" />
-      <Glow tone="lavender" className="-left-[18rem] bottom-[10%] w-[640px] [--glow-opacity:0.08]" />
-      <div className="container-site relative">
-        <SceneHeader
-          index="05"
-          label="System architecture"
+    <section id="system" className="bg-bg pt-24 md:pt-36" aria-labelledby="live-title">
+      <div className="container-site">
+        <SectionHead
+          eyebrow="System architecture"
           id="live-title"
           title="How a question becomes a diagnosis"
           lede="Watch the recorded Kong run stream through each layer, or select a layer to read what it owns."
-          aside={
-            <span className="hud block max-w-[16rem] leading-relaxed lg:text-right">
-              Frontend simulation · replayed from a recorded run · no live gateway
-            </span>
-          }
+          titleClassName="display-caps text-[clamp(2.7rem,7.6vw,7rem)]"
         />
+      </div>
 
-        {/* Flow */}
-        <ol
-          className="mt-16 grid grid-cols-2 gap-2 sm:grid-cols-4 md:mt-20 lg:grid-cols-7 lg:gap-0"
-          aria-label="System flow"
-        >
-          {flow.map((n, i) => {
-            const isActive = active === n.id;
-            const isSelected = selected === n.id;
-            const tone =
-              n.tone === "model"
-                ? "text-violet"
-                : n.tone === "accent"
-                  ? "text-accent"
-                  : "text-fg";
-            return (
-              <li key={n.id} className="relative flex items-stretch">
-                <button
-                  type="button"
-                  onClick={() => setSelected((s) => (s === n.id ? null : n.id))}
-                  aria-pressed={isSelected}
-                  className={`lift group relative w-full rounded-lg border bg-night-1/80 px-3 py-3.5 text-left lg:rounded-none lg:border-y lg:border-l lg:border-r-0 lg:first:rounded-l-lg lg:last:rounded-r-lg lg:last:border-r ${
-                    isSelected
-                      ? "border-accent/60 bg-night-2"
-                      : isActive
-                        ? "border-line-strong bg-night-2"
-                        : "border-fg/[0.07] hover:bg-night-2"
-                  }`}
-                >
-                  <span className="flex items-center justify-between gap-2">
-                    <span className={`font-mono text-[10px] tracking-widest text-fg-dim`}>0{i + 1}</span>
-                    <span
-                      aria-hidden
-                      className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                        isActive ? "bg-accent node-pulse" : isSelected ? "bg-accent" : "bg-line-strong"
-                      }`}
-                    />
-                  </span>
-                  <span className={`mt-2 block text-sm font-medium ${tone}`}>{n.label}</span>
-                  <span className="mt-0.5 block truncate font-mono text-[10px] text-fg-dim">{n.kicker}</span>
-                </button>
-                {i < flow.length - 1 && (
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute -right-1.5 top-1/2 z-10 hidden h-3 w-3 -translate-y-1/2 rotate-45 border-r border-t border-line-strong bg-night-1 lg:block"
-                  />
-                )}
-              </li>
-            );
-          })}
-        </ol>
-
-        <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-12">
-          <div className="min-w-0 lg:col-span-7">
-            <AgentConsole onStage={onStage} />
+      {/* Two grounds, edge to edge. */}
+      <div className="mt-14 grid grid-cols-[minmax(0,1fr)] md:mt-20 lg:grid-cols-2">
+        <div className="order-2 min-w-0 bg-stone px-5 py-14 md:px-10 md:py-20 lg:order-1 lg:pl-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))] lg:pr-14">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="text-[32px] tracking-[-0.03em] md:text-[40px]">System flow</h3>
+            <span className="label">{selected ? "selected" : active === "idle" ? "default" : "following run"}</span>
           </div>
+          <ol className="mt-8 flex flex-col gap-2.5 lg:min-h-[574px]" aria-label="System flow">
+            {flow.map((n, i) => {
+              const isOpen = shown === n.id;
+              const isActive = active === n.id;
+              return (
+                <li
+                  key={n.id}
+                  className={cn(
+                    "rounded-[18px] border transition-colors duration-500",
+                    isOpen ? "border-fg bg-bg-1" : "border-fg/35 hover:border-fg"
+                  )}
+                >
+                  <h4>
+                    <button
+                      type="button"
+                      onClick={() => setSelected((s) => (s === n.id ? null : n.id))}
+                      aria-expanded={isOpen}
+                      aria-controls={`layer-${n.id}`}
+                      className="flex w-full items-center gap-4 rounded-[18px] px-5 py-4 text-left"
+                    >
+                      <span className={cn("w-6 text-[15px] tabular-nums transition-colors", isActive ? "text-accent" : "text-fg-dim")}>0{i + 1}</span>
+                      <span className={cn("text-[18px] font-semibold tracking-[-0.02em]", isOpen ? toneText[n.tone ?? "plain"] : "text-fg")}>{n.label}</span>
+                      <span className="hidden truncate text-[15px] text-fg-dim sm:block">{n.kicker}</span>
+                      <span className="ml-auto flex items-center gap-3">
+                        {isActive && <span aria-hidden className="node-pulse h-2 w-2 rounded-full bg-accent" />}
+                        <Plus size={20} strokeWidth={1.4} className={cn("text-fg-dim transition-transform duration-500 ease-out-expo", isOpen && "rotate-45 text-fg")} />
+                      </span>
+                    </button>
+                  </h4>
+                  <div
+                    id={`layer-${n.id}`}
+                    aria-hidden={!isOpen}
+                    className="grid transition-[grid-template-rows] duration-500 ease-out-expo"
+                    style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="text-pretty px-5 pb-5 text-[16px] leading-[1.5] text-fg-muted sm:pl-[3.75rem]">
+                        <span className="mb-1 block text-fg-dim sm:hidden">{n.kicker}</span>
+                        {n.detail}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+          <Link
+            href={`/projects/${kong.slug}#architecture`}
+            className="group mt-8 inline-flex items-center gap-2 border-b border-fg/40 pb-0.5 text-[17px] font-medium transition-colors hover:border-accent hover:text-accent"
+          >
+            Read the architecture <ArrowRight size={17} className="transition-transform duration-500 ease-out-expo group-hover:translate-x-1" />
+          </Link>
+        </div>
 
-          {/* Explanation */}
-          <aside className="glass relative flex flex-col overflow-hidden rounded-xl p-6 md:p-8 lg:col-span-5" aria-live="polite">
-            <Viewfinder inset="inset-3" />
-            <div className="flex items-center justify-between">
-              <span className="label-mono">layer</span>
-              <span className="font-mono text-[11px] text-fg-dim">{selected ? "selected" : active === "idle" ? "default" : "following run"}</span>
-            </div>
-            <h3
-              className={`display mt-4 text-4xl ${
-                node.tone === "model" ? "text-violet" : node.tone === "accent" ? "text-accent" : "text-fg"
-              }`}
-            >
-              {node.label}
-            </h3>
-            <p className="mt-1 font-mono text-xs text-fg-dim">{node.kicker}</p>
-            <p className="mt-5 text-pretty text-[15px] leading-relaxed text-fg-muted">{node.detail}</p>
-
-            <div className="mt-auto pt-8">
-              <Link
-                href={`/projects/${kong.slug}#architecture`}
-                className="inline-flex items-center gap-2 text-sm text-fg underline-offset-4 hover:underline"
-              >
-                Read the architecture <ArrowRight size={14} />
-              </Link>
-            </div>
-          </aside>
+        <div className="order-1 min-w-0 bg-bg px-5 pb-14 md:px-10 md:pb-20 lg:order-2 lg:py-20 lg:pl-14 lg:pr-[max(2.5rem,calc((100vw-1280px)/2+2.5rem))]">
+          <div className="lg:sticky lg:top-28">
+            <AgentConsole onStage={onStage} bodyHeight="h-[400px] md:h-[560px] lg:h-[clamp(440px,calc(100svh-260px),640px)]" />
+            <p className="mt-4 text-[14px] text-fg-dim">Frontend simulation · replayed from a recorded run · no live gateway</p>
+          </div>
         </div>
       </div>
     </section>

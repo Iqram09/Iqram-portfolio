@@ -1,22 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { JetBrains_Mono, Manrope } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { site } from "@/data/site";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
-// Manrope carries every word, from the display headline to body copy.
-const manrope = Manrope({
+// Noto Serif Display, condensed cut (OFL, see app/fonts/OFL.txt). Self-hosted
+// as two static Latin instances: 15 KB each, against 76 KB for the variable.
+const display = localFont({
+  src: [
+    { path: "./fonts/noto-serif-display-condensed-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/noto-serif-display-condensed-500.woff2", weight: "500", style: "normal" },
+  ],
+  variable: "--font-display",
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
+});
+
+// Inter Tight carries everything that is read rather than looked at.
+const sans = Inter_Tight({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-// JetBrains Mono is reserved for HUD readouts and technical metadata.
+// JetBrains Mono is kept for code: terminals, identifiers, JSON.
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   display: "swap",
   weight: ["400", "500"],
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -72,8 +86,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#050200",
-  colorScheme: "dark",
+  themeColor: "#F1F1F0",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -95,7 +109,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${manrope.variable} ${mono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`} suppressHydrationWarning>
       <head>
         {/* Adds `js` before first paint so entrance states only apply when scripts run. */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
@@ -103,7 +117,7 @@ export default function RootLayout({
       <body className="flex min-h-screen flex-col bg-bg font-sans text-fg antialiased">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-full focus:bg-fg focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-bg"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-fg focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-bg"
         >
           Skip to content
         </a>

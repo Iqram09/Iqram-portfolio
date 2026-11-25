@@ -7,40 +7,41 @@ export default function ToolCatalog() {
   return (
     <div>
       {/* Guarantees */}
-      <ul className="flex flex-wrap gap-2" aria-label="Guarantees shared by every tool">
+      <ul className="flex flex-col gap-2 text-[16px]" aria-label="Guarantees shared by every tool">
         {toolGuarantees.map((g) => (
-          <li key={g.label} className="flex items-center gap-2 rounded-md border border-line bg-bg-1 px-3 py-1.5">
-            <Check size={13} className="text-ok" />
-            <span className="text-sm text-fg">{g.label}</span>
-            <span className="hidden font-mono text-[10px] text-fg-dim sm:inline">· {g.detail}</span>
+          <li key={g.label} className="flex flex-wrap items-center gap-x-2.5">
+            <Check size={17} className="text-ok" />
+            <span className="font-medium tracking-[-0.01em]">{g.label}</span>
+            <span className="text-[14px] text-fg-dim max-sm:pl-[27px]">· {g.detail}</span>
           </li>
         ))}
       </ul>
 
-      <div className="mt-6 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
-        {toolGroups.map((g) => (
-          <div key={g.group} className="bg-bg p-5">
-            <div className="flex items-center justify-between">
-              <h4 className="text-sm font-semibold text-fg">{g.group}</h4>
-              <span className="font-mono text-[10px] text-fg-dim">{g.tools.length}</span>
+      {/* Alternating grounds, like a board. */}
+      <div className="mt-7 grid overflow-hidden rounded-[18px] sm:grid-cols-2">
+        {toolGroups.map((g, i) => (
+          <div
+            key={g.group}
+            className={`p-6 md:p-8 ${i % 2 ? "bg-stone" : "bg-bg-1"} ${i % 4 === 1 || i % 4 === 2 ? "sm:bg-stone" : "sm:bg-bg-1"}`}
+          >
+            <div className="flex items-baseline justify-between">
+              <h3 className="text-[26px] tracking-[-0.03em]">{g.group}</h3>
+              <span className="text-[15px] tabular-nums text-fg-dim">{g.tools.length}</span>
             </div>
-            <ul className="mt-3 flex flex-col gap-2.5">
+            <ul className="mt-5 flex flex-col gap-4">
               {g.tools.map((t) => {
                 const inAgent = agentSet.has(t.name);
                 return (
                   <li key={`${g.group}-${t.name}`}>
-                    <div className="flex items-center gap-2">
-                      <code className="font-mono text-[12.5px] text-accent">{t.name}</code>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <code className="break-all font-mono text-[14px] font-medium">{t.name}</code>
                       {inAgent && (
-                        <span
-                          className="rounded border border-violet/40 bg-violet/10 px-1 font-mono text-[9px] uppercase tracking-wider text-violet"
-                          title="Included in the in-repo agent tool set"
-                        >
+                        <span className="rounded bg-violet px-1.5 py-px text-[12px] text-white" title="Included in the in-repo agent tool set">
                           agent
                         </span>
                       )}
                     </div>
-                    <p className="mt-0.5 text-[12.5px] leading-relaxed text-fg-muted">{t.blurb}</p>
+                    <p className="mt-1 text-[15px] leading-[1.5] text-fg-muted">{t.blurb}</p>
                   </li>
                 );
               })}
@@ -50,18 +51,18 @@ export default function ToolCatalog() {
       </div>
 
       {/* Agent subset note — a real design decision, with its measurement. */}
-      <div className="mt-4 grid gap-4 rounded-xl border border-line bg-bg-1 p-5 md:grid-cols-[1fr_auto] md:items-center">
-        <p className="text-sm leading-relaxed text-fg-muted">
+      <div className="mt-6 grid gap-6 md:grid-cols-[1fr_auto] md:items-center md:gap-12">
+        <p className="text-[16px] leading-relaxed text-fg-muted">
           <span className="text-fg">The MCP server registers all 14 tools; the in-repo agent is given 8 of them.</span>{" "}
-          An interactive client benefits from browsing tools like <code className="font-mono text-[12px] text-fg">list_upstreams</code>;
+          An interactive client benefits from browsing tools like <code className="font-mono text-[14px] text-fg">list_upstreams</code>;
           an agent with a bounded step budget mostly does not — every extra tool is another way to spend a step on something
           irrelevant. Tool definitions are context the model pays for on every call.
         </p>
-        <dl className="flex gap-6 font-mono text-[11px]">
+        <dl className="flex gap-8">
           {toolSurface.map((s) => (
             <div key={s.label}>
-              <dt className="text-fg-dim">{s.label}</dt>
-              <dd className="mt-0.5 text-fg">
+              <dt className="text-[14px] text-fg-dim">{s.label}</dt>
+              <dd className="mt-1 whitespace-nowrap text-[16px]">
                 {s.tools} tools · {s.bytes.toLocaleString()} B
               </dd>
             </div>

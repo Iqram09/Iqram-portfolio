@@ -5,17 +5,30 @@ import Link from "next/link";
 import { clients } from "@/data/experience";
 import { evalRun, kong } from "@/data/kong";
 import { site } from "@/data/site";
-import Glow from "@/components/brand/Glow";
-import Glint from "@/components/brand/Glint";
 import { useGsap } from "@/lib/useGsap";
 import { prefersReducedMotion } from "@/lib/motion";
+import { cn } from "@/lib/cn";
+
+/** One figure per track of work. Every value traces to data/. */
+const figures = {
+  years: { value: parseInt(site.experienceYears, 10), suffix: "+", label: "Years shipping software", note: "Feb 2023 – present" },
+  gateways: { value: 3, suffix: "+", label: "Gateway client projects", note: "Kong · Layer7 · Apigee" },
+  sites: { value: clients.length, suffix: "", label: "Live client websites", note: "Next.js · Supabase · Shopify" },
+  evals: { value: evalRun.passed, suffix: `/${evalRun.cases}`, label: "Agent eval cases passed", note: `Kong MCP agent · ${evalRun.id}` },
+};
+
+type FigureKey = keyof typeof figures;
 
 /**
- * The statement, from the CV's profile summary. Words wrapped in [brackets]
- * carry the warm accent.
+ * The statement, from the CV's profile summary: each claim is followed by the
+ * figure that backs it. Words wrapped in [brackets] take the accent.
  */
-const statement =
-  "I'm Iqram — an engineer in Mumbai with 3+ years of shipping software end to end. [Enterprise API integrations] on-site at a leading private-sector bank. [Live websites] for freelance clients. And an [LLM agent] that diagnoses Kong Gateway through an MCP server I built.";
+const claims: { text: string; figure: FigureKey }[] = [
+  { text: "I’m Iqram — an engineer in Mumbai with 3+ years of shipping software end to end.", figure: "years" },
+  { text: "[Enterprise API integrations] on-site at a leading private-sector bank.", figure: "gateways" },
+  { text: "[Live websites] for freelance clients.", figure: "sites" },
+  { text: "And an [LLM agent] that diagnoses Kong Gateway through an MCP server I built.", figure: "evals" },
+];
 
 function tokens(text: string) {
   const out: { word: string; em: boolean }[] = [];
@@ -33,122 +46,143 @@ function tokens(text: string) {
   return out;
 }
 
-/** One figure per track of work. Every value traces to data/. */
-const figures = [
-  { value: parseInt(site.experienceYears, 10), suffix: "+", label: "Years shipping software", note: "Feb 2023 – present" },
-  { value: 3, suffix: "+", label: "Gateway client projects", note: "Kong · Layer7 · Apigee" },
-  { value: clients.length, suffix: "", label: "Live client websites", note: "Next.js · Supabase · Shopify" },
-  { value: evalRun.passed, suffix: `/${evalRun.cases}`, label: "Agent eval cases passed", note: `Kong MCP agent · ${evalRun.id}` },
-];
+const plain = claims.map((c) => c.text.replace(/[[\]]/g, "")).join(" ");
 
-function Figure({ value, suffix, label, note, run }: (typeof figures)[number] & { run: boolean }) {
+/* Each receipt is its own small object, set into the line of type. */
+const looks: Record<FigureKey, { box: string; num: string; tilt: number }> = {
+  years: { box: "bg-camel text-fg", num: "text-fg", tilt: -4 },
+  gateways: { box: "bg-cobalt text-white", num: "text-white", tilt: 3 },
+  sites: { box: "bg-leaf text-white rounded-full pl-[0.34em] pr-[0.42em]", num: "text-white", tilt: -3 },
+  evals: { box: "bg-accent text-white", num: "text-accent-soft", tilt: 4 },
+};
+
+function Receipt({ id }: { id: FigureKey }) {
+  const { value, suffix, label, note } = figures[id];
+  const look = looks[id];
+  const ref = useRef<HTMLSpanElement>(null);
   const [n, setN] = useState(value);
+
+  // Counts up once, when it arrives.
   useEffect(() => {
-    if (!run || prefersReducedMotion()) return;
+    const el = ref.current;
+    if (!el || prefersReducedMotion() || typeof IntersectionObserver === "undefined") return;
     let raf = 0;
-    const start = performance.now();
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - start) / 1400);
-      setN(Math.round(value * (1 - Math.pow(1 - t, 3))));
-      if (t < 1) raf = requestAnimationFrame(tick);
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / 1300);
+          setN(Math.round(value * (1 - Math.pow(1 - t, 3))));
+          if (t < 1) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+      },
+      { threshold: 0.8 }
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      cancelAnimationFrame(raf);
     };
-    setN(0);
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [run, value]);
+  }, [value]);
+
   return (
-    <div className="flex flex-col gap-2 border-t border-line pt-6">
-      <div className="font-display text-5xl font-medium tabular-nums tracking-tightest text-fg md:text-6xl">
-        <span aria-hidden>
-          {n}
-          <span className="text-fg-dim">{suffix}</span>
-        </span>
-        <span className="sr-only">
-          {value}
-          {suffix}
-        </span>
-      </div>
-      <div className="text-sm font-medium text-fg">{label}</div>
-      <div className="hud">{note}</div>
-    </div>
+    <span
+      ref={ref}
+      data-receipt={look.tilt}
+      style={{ transform: `rotate(${look.tilt}deg)` }}
+      className={cn(
+        "mx-[0.06em] inline-flex h-[0.94em] min-h-[52px] items-center gap-[0.16em] whitespace-nowrap rounded-[4px] px-[0.2em] align-middle font-sans leading-none tracking-normal shadow-[0_18px_34px_-18px_rgba(22,22,22,.5)]",
+        look.box
+      )}
+    >
+      <span aria-hidden className={cn("font-display text-[0.78em] font-medium tabular-nums tracking-[-0.03em]", look.num)}>
+        {n}
+        {suffix}
+      </span>
+      <span className="sr-only">
+        {value}
+        {suffix}{" "}
+      </span>
+      <span className="flex flex-col gap-1 text-left">
+        <span className="text-[13px] font-semibold leading-none tracking-[-0.01em] md:text-[15px]">{label}</span>
+        <span className="text-[12px] leading-none opacity-85 md:text-[13px]">{note}</span>
+      </span>
+    </span>
   );
 }
 
 export default function Intro() {
   const root = useRef<HTMLElement>(null);
-  const figuresRef = useRef<HTMLDivElement>(null);
-  const [run, setRun] = useState(false);
-  const words = tokens(statement);
 
-  // The statement lights up word by word as it crosses the viewport. It
-  // starts from a dim colour, not low opacity, so every state still clears
-  // WCAG AA for large text (#66677A is 3.8:1 on the ground).
+  // The statement inks in letter by letter as it crosses the viewport. It
+  // starts from a mid grey, not low opacity, so every state still clears
+  // WCAG AA for large text (#8B8B87 is 3.2:1 on the ground).
   useGsap(root, ({ gsap }, el) => {
-    const ws = gsap.utils.toArray<HTMLElement>("[data-word]", el);
+    const chars = gsap.utils.toArray<HTMLElement>("[data-char]", el);
     gsap.fromTo(
-      ws,
-      { color: "#66677A" },
+      chars,
+      { color: "#8B8B87" },
       {
-        color: (_: number, t: HTMLElement) => (t.dataset.em ? "#C49A76" : "#D9CFC9"),
+        color: (_: number, t: HTMLElement) => (t.dataset.em !== undefined ? "#7F1330" : "#161616"),
         ease: "none",
-        stagger: 0.12,
-        scrollTrigger: { trigger: "[data-statement]", start: "top 78%", end: "bottom 52%", scrub: 0.8 },
+        duration: 0.4,
+        stagger: 0.04,
+        scrollTrigger: { trigger: "[data-statement]", start: "top 76%", end: "bottom 62%", scrub: 0.6 },
       }
     );
+    gsap.utils.toArray<HTMLElement>("[data-receipt]", el).forEach((r) => {
+      const tilt = Number(r.dataset.receipt);
+      gsap.fromTo(
+        r,
+        { scale: 0.55, opacity: 0, rotation: tilt * -3 },
+        { scale: 1, opacity: 1, rotation: tilt, duration: 0.9, ease: "back.out(1.7)", scrollTrigger: { trigger: r, start: "top 88%", once: true } }
+      );
+    });
   });
 
-  useEffect(() => {
-    const el = figuresRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return setRun(true);
-    const obs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        setRun(true);
-        obs.disconnect();
-      }
-    }, { threshold: 0.35 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
   return (
-    <section ref={root} id="intro" className="relative overflow-hidden bg-bg py-28 md:py-40" aria-labelledby="intro-title">
-      <Glow tone="warm" className="-right-[24rem] top-[10%] w-[820px] [--glow-opacity:0.28]" />
-      <div className="container-site relative">
-        <div className="hud flex items-center gap-4">
-          <span className="text-warm-soft">Scene 02</span>
-          <span aria-hidden className="ticks h-2 flex-1 opacity-40" />
-          <span className="hidden sm:inline">Introduction</span>
-          <span aria-hidden>02 / 09</span>
-        </div>
+    <section ref={root} id="intro" className="bg-bg-2 py-24 md:py-36" aria-labelledby="intro-title">
+      <div className="container-site">
+        <h2 id="intro-title" className="eyebrow">
+          In brief
+        </h2>
 
-        <div className="mt-16 grid gap-12 lg:mt-24 lg:grid-cols-12">
-          <div className="lg:col-span-3">
-            <h2 id="intro-title" className="hud inline-flex items-center gap-2 text-fg-muted">
-              <Glint className="w-2.5 text-warm-soft" /> In brief
-            </h2>
-          </div>
-          <p
-            data-statement
-            className="text-pretty font-display text-[clamp(1.75rem,3.6vw,3.4rem)] font-medium leading-[1.14] tracking-[-0.03em] text-fg lg:col-span-9"
-          >
-            {words.map((t, i) => (
-              <span key={i}>
-                <span data-word data-em={t.em ? "" : undefined} className={t.em ? "text-warm-soft" : undefined}>
-                  {t.word}
-                </span>{" "}
+        <div
+          data-statement
+          className="mt-12 font-display text-[clamp(2.2rem,6.1vw,5.75rem)] font-normal leading-[1.1] tracking-[-0.025em] md:mt-16 [&>*]:leading-[1.1]"
+        >
+          <p className="sr-only">{plain}</p>
+          {claims.map((c, ci) => (
+            <span key={c.figure} className="max-md:mb-6 max-md:block">
+              <span aria-hidden className={ci === 0 ? "md:ml-[1.4em]" : undefined}>
+                {tokens(c.text).map((t, i) => (
+                  <span key={i}>
+                    <span className="whitespace-nowrap">
+                      {Array.from(t.word).map((ch, j) => (
+                        <span key={j} data-char data-em={t.em ? "" : undefined} className={t.em ? "text-accent" : undefined}>
+                          {ch}
+                        </span>
+                      ))}
+                    </span>{" "}
+                  </span>
+                ))}
               </span>
-            ))}
-          </p>
-        </div>
-
-        <div ref={figuresRef} className="mt-24 grid grid-cols-2 gap-x-6 gap-y-12 md:mt-32 lg:grid-cols-4 lg:gap-x-10">
-          {figures.map((f) => (
-            <Figure key={f.label} {...f} run={run} />
+              <span className="max-md:mt-2 max-md:block">
+                <Receipt id={c.figure} />{" "}
+              </span>
+            </span>
           ))}
         </div>
-        <p className="hud mt-10 normal-case tracking-normal">
+
+        <p className="mt-14 max-w-xl text-[15px] leading-relaxed text-fg-muted md:mt-20">
           Eval figure from{" "}
-          <Link href={`/projects/${kong.slug}#evaluation`} className="text-fg-muted underline decoration-line-strong underline-offset-4 hover:text-fg">
+          <Link
+            href={`/projects/${kong.slug}#evaluation`}
+            className="text-fg underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-accent"
+          >
             {kong.title}
           </Link>{" "}
           — {evalRun.caveat}

@@ -1,5 +1,5 @@
 /**
- * Signature motif — appears in the hero, project card, case study and contact.
+ * Signature motif of the Kong case study:
  *   > tool_call()  → evidence  ✓ verified
  */
 export default function Motif({
@@ -9,7 +9,7 @@ export default function Motif({
   className?: string;
   size?: "sm" | "md";
 }) {
-  const text = size === "md" ? "text-sm" : "text-xs";
+  const text = size === "md" ? "text-sm" : "text-[13px]";
   return (
     <div
       className={`inline-flex flex-wrap items-center gap-x-3 gap-y-1 font-mono ${text} text-fg-dim ${className}`}

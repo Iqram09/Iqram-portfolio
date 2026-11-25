@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { caseSections } from "./sections";
+import { cn } from "@/lib/cn";
 
 /** Sticky table of contents with an active-section indicator. Desktop only; a compact strip on mobile. */
 export default function CaseStudyNav() {
@@ -24,9 +25,9 @@ export default function CaseStudyNav() {
   }, []);
 
   return (
-    <nav aria-label="Case study sections" className="lg:sticky lg:top-24">
-      <p className="label-mono mb-3 hidden lg:block">contents</p>
-      <ol className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:gap-0.5 lg:overflow-visible lg:pb-0 [scrollbar-width:none]">
+    <nav aria-label="Case study sections" className="lg:sticky lg:top-28">
+      <p className="label mb-3 hidden lg:block">contents</p>
+      <ol className="flex gap-1.5 overflow-x-auto pb-1 [scrollbar-width:none] lg:flex-col lg:gap-0 lg:overflow-visible lg:border-l lg:border-line lg:pb-0">
         {caseSections.map((s) => {
           const on = active === s.id;
           return (
@@ -34,11 +35,12 @@ export default function CaseStudyNav() {
               <a
                 href={`#${s.id}`}
                 aria-current={on ? "location" : undefined}
-                className={`flex items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[13px] transition-colors lg:-ml-2.5 ${
-                  on ? "bg-bg-2 text-fg" : "text-fg-muted hover:text-fg"
-                }`}
+                className={cn(
+                  "flex items-center gap-2.5 px-3 py-2 text-[15px] tracking-[-0.01em] transition-colors max-lg:rounded-md max-lg:border lg:-ml-px lg:border-l-2 lg:py-1.5 lg:pl-4",
+                  on ? "border-accent text-fg max-lg:bg-bg-1" : "text-fg-muted hover:text-fg max-lg:border-line lg:border-transparent"
+                )}
               >
-                <span className={`font-mono text-[10px] tabular-nums ${on ? "text-accent" : "text-fg-dim"}`}>{s.n}</span>
+                <span className={cn("text-[13px] tabular-nums", on ? "text-accent" : "text-fg-dim")}>{s.n}</span>
                 <span className="whitespace-nowrap">{s.title}</span>
               </a>
             </li>
