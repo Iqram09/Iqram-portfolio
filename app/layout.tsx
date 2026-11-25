@@ -1,12 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { site } from "@/data/site";
 import SmoothScroll from "@/components/motion/SmoothScroll";
 import "./globals.css";
 
-// Noto Serif Display, condensed cut (OFL, see app/fonts/OFL.txt). Self-hosted
-// as two static Latin instances: 15 KB each, against 76 KB for the variable.
+// All fonts are self-hosted (OFL, licences in app/fonts) so a build never has to
+// reach Google Fonts: next/font/google fails outright if Google answers with a
+// font URL it cannot parse.
+
+// Noto Serif Display, condensed cut, as two static Latin instances: 15 KB each,
+// against 76 KB for the variable.
 const display = localFont({
   src: [
     { path: "./fonts/noto-serif-display-condensed-400.woff2", weight: "400", style: "normal" },
@@ -18,18 +21,23 @@ const display = localFont({
 });
 
 // Inter Tight carries everything that is read rather than looked at.
-const sans = Inter_Tight({
-  subsets: ["latin"],
+const sans = localFont({
+  src: "./fonts/inter-tight-latin.woff2",
+  weight: "100 900",
+  style: "normal",
   variable: "--font-sans",
   display: "swap",
+  adjustFontFallback: "Arial",
 });
 
 // JetBrains Mono is kept for code: terminals, identifiers, JSON.
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
+const mono = localFont({
+  src: "./fonts/jetbrains-mono-latin.woff2",
+  weight: "400 500",
+  style: "normal",
   variable: "--font-mono",
   display: "swap",
-  weight: ["400", "500"],
+  adjustFontFallback: "Arial",
   preload: false,
 });
 

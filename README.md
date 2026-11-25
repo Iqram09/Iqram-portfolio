@@ -15,7 +15,8 @@ Built with Next.js 14 (App Router), TypeScript and Tailwind CSS, with GSAP, Fram
 ## Design
 
 "Letterform": a light editorial system. Neutral paper and near-black bands, a condensed display serif
-(Noto Serif Display, self-hosted in `app/fonts`, OFL) over Inter Tight, and JetBrains Mono for code only.
+(Noto Serif Display) over Inter Tight, and JetBrains Mono for code only. All three are self-hosted in
+`app/fonts` (OFL), so a build never depends on Google Fonts.
 The five letters of the name are drawn as shapes in `components/brand/Letterform.tsx` and cut from project
 imagery. Colours are sampled from the work and defined once in `tailwind.config.js`.
 
