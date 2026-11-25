@@ -1,47 +1,71 @@
 import Link from "next/link";
 import { navLinks, site } from "@/data/site";
 import AnchorLink from "@/components/ui/AnchorLink";
-import Glint from "@/components/brand/Glint";
+import BackToTop from "@/components/ui/BackToTop";
+import DitherWordmark from "@/components/brand/DitherWordmark";
+import MumbaiClock from "@/components/brand/MumbaiClock";
+
+const link = "inline-block py-1 text-[16px] text-inv-muted transition-colors hover:text-inv";
 
 export default function Footer() {
   return (
-    <footer className="relative bg-night py-12">
+    <footer className="on-dark overflow-hidden bg-night pb-10 pt-4 text-inv">
       <div className="container-site">
-        <div className="flex flex-col gap-10 border-t border-line pt-10 md:flex-row md:items-start md:justify-between">
-          <div>
-            <p className="inline-flex items-center gap-2.5 text-sm font-semibold tracking-[0.24em] text-fg">
-              <Glint className="w-3 text-accent-soft" /> {site.shortName}
-            </p>
-            <p className="mt-3 text-sm text-fg-muted">{site.identity}</p>
-            <p className="hud mt-2">
+        <div className="rule-dashed" aria-hidden />
+        <div className="grid gap-x-8 gap-y-10 py-12 sm:grid-cols-2 md:py-16 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <p className="text-[17px] font-semibold tracking-[-0.015em]">{site.identity}</p>
+            <p className="mt-2 text-[16px] leading-relaxed text-inv-muted">
               {site.location} · {site.coordinates}
             </p>
           </div>
-
-          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-14 gap-y-2 text-sm sm:grid-cols-3">
-            {navLinks.map((l) => (
-              <AnchorLink key={l.id} href={l.href} className="text-fg-muted transition-colors hover:text-fg">
-                {l.label}
-              </AnchorLink>
-            ))}
-            <Link href="/resume" className="text-fg-muted transition-colors hover:text-fg">
-              Résumé
-            </Link>
-            <a href={site.github} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
-              GitHub
-            </a>
-            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="text-fg-muted transition-colors hover:text-fg">
-              LinkedIn
-            </a>
-            <a href={`mailto:${site.email}`} className="text-fg-muted transition-colors hover:text-fg">
-              Email
-            </a>
+          <nav aria-label="Footer" className="grid grid-cols-2 gap-x-8 sm:col-span-2 lg:col-span-6 lg:col-start-7">
+            <ul>
+              {navLinks.map((l) => (
+                <li key={l.id}>
+                  <AnchorLink href={l.href} className={link}>
+                    {l.label}
+                  </AnchorLink>
+                </li>
+              ))}
+            </ul>
+            <ul>
+              <li>
+                <Link href="/resume" className={link}>
+                  Résumé
+                </Link>
+              </li>
+              <li>
+                <a href={site.github} target="_blank" rel="noopener noreferrer" className={link}>
+                  GitHub
+                </a>
+              </li>
+              <li>
+                <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className={link}>
+                  LinkedIn
+                </a>
+              </li>
+              <li>
+                <a href={`mailto:${site.email}`} className={link}>
+                  Email
+                </a>
+              </li>
+            </ul>
           </nav>
         </div>
+        <div className="rule-dashed" aria-hidden />
 
-        <div className="hud mt-12 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="py-14 md:py-24">
+          <DitherWordmark text="iqram patel" label={site.displayName} />
+        </div>
+
+        <div className="flex flex-col gap-x-10 gap-y-3 text-[15px] text-inv-muted md:flex-row md:items-center">
+          <p>
+            Mumbai, <MumbaiClock short className="tabular-nums" />
+          </p>
           <p>© 2026 {site.fullName}</p>
-          <p>Next.js · TypeScript · GSAP · Framer Motion · Lenis</p>
+          <p className="text-inv-dim">Next.js · TypeScript · GSAP · Framer Motion · Lenis</p>
+          <BackToTop className="md:ml-auto" />
         </div>
       </div>
     </footer>

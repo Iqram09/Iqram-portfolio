@@ -3,9 +3,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { kong, kongImages, type KongImage } from "@/data/kong";
-import Viewfinder from "@/components/brand/Viewfinder";
-import Glow from "@/components/brand/Glow";
-import { useGsap } from "@/lib/useGsap";
+import { LetterGlyph } from "@/components/brand/Letterform";
+import { Tag } from "@/components/ui/Bits";
 import { prefersReducedMotion } from "@/lib/motion";
 import { cn } from "@/lib/cn";
 
@@ -17,10 +16,17 @@ const slides: { image: KongImage; label: string; title: string }[] = [
 
 const INTERVAL = 6500;
 
+/** Where each sheet lies, by its distance behind the front one. */
+const poses = [
+  "translate(-50%, -50%) rotate(0deg) scale(1)",
+  "translate(-43%, -53%) rotate(5deg) scale(0.93)",
+  "translate(-57%, -51%) rotate(-5.5deg) scale(0.9)",
+];
+
 /**
  * Size each window to its capture so nothing is letterboxed: the image area
  * takes the largest width that fits both a width and a height budget of the
- * frame (4:3 on phones, 16:9 above).
+ * frame (4:5 on phones, 16:9 above).
  */
 function fit(img: KongImage, frame: number, maxW: number, maxH: number) {
   const r = img.w / img.h;
@@ -29,43 +35,31 @@ function fit(img: KongImage, frame: number, maxW: number, maxH: number) {
 }
 
 /**
- * The Kong preview: real captures from the project, cross-fading in a 16:9
- * frame. The frame opens from a clipped window as it scrolls in; slides
- * advance on their own only while in view, pause on hover or focus, and
- * never auto-advance for reduced motion.
+ * The Kong preview: real captures from the project as three sheets on a flat
+ * ground. Choosing one deals it to the front. They turn over on their own
+ * only while in view, pause on hover or focus, and never for reduced motion.
  */
 export default function KongShowcase() {
   const root = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [inView, setInView] = useState(false);
-  // Captures mount only once the frame is near, and only the current and next.
+  // Captures mount only once the frame is near.
   const [near, setNear] = useState(false);
-  const [mounted, setMounted] = useState<Set<number>>(() => new Set([0]));
-
-  useGsap(root, ({ gsap }, el) => {
-    gsap.fromTo(
-      "[data-clip]",
-      { clipPath: "inset(10% 8% 10% 8% round 28px)" },
-      {
-        clipPath: "inset(0% 0% 0% 0% round 28px)",
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top 92%", end: "top 30%", scrub: 0.8 },
-      }
-    );
-    gsap.fromTo("[data-zoom]", { scale: 1.12 }, { scale: 1, ease: "none", scrollTrigger: { trigger: el, start: "top 92%", end: "top 30%", scrub: 0.8 } });
-  });
 
   useEffect(() => {
     const el = root.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!el || typeof IntersectionObserver === "undefined") return setNear(true);
     const obs = new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.4 });
-    const nearObs = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        setNear(true);
-        nearObs.disconnect();
-      }
-    }, { rootMargin: "600px 0px" });
+    const nearObs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setNear(true);
+          nearObs.disconnect();
+        }
+      },
+      { rootMargin: "700px 0px" }
+    );
     obs.observe(el);
     nearObs.observe(el);
     return () => {
@@ -73,11 +67,6 @@ export default function KongShowcase() {
       nearObs.disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    if (!inView) return;
-    setMounted((m) => new Set(Array.from(m).concat(index, (index + 1) % slides.length)));
-  }, [index, inView]);
 
   useEffect(() => {
     if (paused || !inView || prefersReducedMotion()) return;
@@ -88,86 +77,72 @@ export default function KongShowcase() {
   return (
     <div
       ref={root}
-      className="relative"
+      className="on-dark relative aspect-[4/5] overflow-hidden rounded-[4px] bg-cobalt sm:aspect-[4/3] md:aspect-video"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <div data-clip className="relative aspect-[4/3] overflow-hidden rounded-[28px] bg-night md:aspect-video">
-        <div data-zoom className="absolute inset-0">
-          <div aria-hidden className="absolute inset-0 bg-[radial-gradient(80%_70%_at_50%_0%,#0b1020,#020309_70%)]" />
-          <div aria-hidden className="absolute inset-0 bg-reeded opacity-60" />
-          <Glow tone="blue" className="-top-1/3 left-1/2 w-[110%] -translate-x-1/2 [--glow-opacity:0.3]" />
+      <LetterGlyph letter="q" className="absolute -bottom-[34%] right-[4%] h-[128%] w-auto text-[#2A4BD0]" />
 
-          {slides.map((s, i) => {
-            const sm = fit(s.image, 4 / 3, 0.9, 0.66);
-            const md = fit(s.image, 16 / 9, 0.8, 0.68);
-            return (
-            <figure
-              key={s.label}
-              aria-hidden={i !== index}
-              style={{ "--w-sm": sm.w, "--h-sm": sm.h, "--w-md": md.w, "--h-md": md.h } as CSSProperties}
-              className={cn(
-                "glass absolute left-1/2 top-[45%] flex h-[calc(var(--h-sm)+34px)] w-[var(--w-sm)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl bg-night-1/90 transition-[opacity,transform] duration-[1200ms] ease-out-expo md:h-[calc(var(--h-md)+34px)] md:w-[var(--w-md)]",
-                i === index ? "opacity-100" : "pointer-events-none scale-[0.985] opacity-0"
-              )}
-            >
-              <figcaption className="relative flex h-[34px] shrink-0 items-center gap-3 border-b border-fg/[0.07] bg-fg/[0.03] px-3.5">
-                <span className="flex gap-1.5" aria-hidden>
-                  <i className="h-2 w-2 rounded-full bg-fg/15" />
-                  <i className="h-2 w-2 rounded-full bg-fg/15" />
-                  <i className="h-2 w-2 rounded-full bg-fg/15" />
-                </span>
-                <span className="truncate font-mono text-[10.5px] text-fg-muted">{s.title}</span>
-              </figcaption>
-              <div className="relative flex-1 bg-[#0c0c10]">
-                {near && mounted.has(i) ? (
-                <Image
-                  src={s.image.src}
-                  alt={s.image.alt}
-                  fill
-                  sizes="(min-width: 1320px) 920px, (min-width: 768px) 76vw, 90vw"
-                  className="object-cover object-top"
-                />
-                ) : null}
-              </div>
-            </figure>
-            );
-          })}
-        </div>
+      {slides.map((s, i) => {
+        const depth = (i - index + slides.length) % slides.length;
+        const sm = fit(s.image, 4 / 5, 0.86, 0.6);
+        const md = fit(s.image, 16 / 9, 0.74, 0.7);
+        return (
+          <figure
+            key={s.label}
+            aria-hidden={depth !== 0}
+            style={
+              {
+                "--w-sm": sm.w,
+                "--h-sm": sm.h,
+                "--w-md": md.w,
+                "--h-md": md.h,
+                transform: poses[depth],
+                zIndex: 3 - depth,
+              } as CSSProperties
+            }
+            className="absolute left-1/2 top-[46%] flex h-[calc(var(--h-sm)+34px)] w-[var(--w-sm)] flex-col overflow-hidden rounded-lg bg-bg-1 shadow-[0_40px_90px_-30px_rgba(0,0,0,.6)] transition-transform duration-[1100ms] ease-out-expo md:top-[48%] md:h-[calc(var(--h-md)+34px)] md:w-[var(--w-md)]"
+          >
+            <figcaption className="flex h-[34px] shrink-0 items-center gap-3 border-b border-line px-3.5">
+              <span className="flex gap-1.5" aria-hidden>
+                <i className="h-2 w-2 rounded-full bg-bg-3" />
+                <i className="h-2 w-2 rounded-full bg-bg-3" />
+                <i className="h-2 w-2 rounded-full bg-bg-3" />
+              </span>
+              <span className="truncate font-mono text-[12px] text-fg-muted">{s.title}</span>
+            </figcaption>
+            <div className={cn("relative flex-1", i === 1 ? "bg-bg-1" : "bg-term")}>
+              {near ? (
+                <Image src={s.image.src} alt={s.image.alt} fill quality={90} sizes="(min-width: 1280px) 960px, (min-width: 768px) 74vw, 86vw" className="object-cover object-top" />
+              ) : null}
+            </div>
+          </figure>
+        );
+      })}
 
-        {/* Glass detail overlays. */}
-        <div className="glass glass-blur absolute left-4 top-4 hidden items-center gap-2 rounded-full px-3 py-1.5 md:inline-flex">
-          <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden />
-          <span className="hud text-fg-muted">Captured {kong.capturedOn}</span>
-        </div>
-        <Viewfinder inset="inset-4 md:inset-6" />
-      </div>
+      <Tag className="absolute left-4 top-4 z-10 md:left-6 md:top-6">Captured {kong.capturedOn}</Tag>
 
-      {/* Slide controls. */}
-      <div role="tablist" aria-label="Project captures" className="glass glass-blur glass-strong absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-1 rounded-full p-1 md:bottom-6">
+      <div role="tablist" aria-label="Project captures" className="absolute bottom-4 left-4 right-4 z-10 flex flex-wrap gap-1.5 md:bottom-6 md:left-6 md:gap-2">
         {slides.map((s, i) => (
           <button
             key={s.label}
             role="tab"
             type="button"
             aria-selected={i === index}
-            onClick={() => {
-              setMounted((m) => new Set(Array.from(m).concat(i)));
-              setIndex(i);
-            }}
+            onClick={() => setIndex(i)}
             className={cn(
-              "relative overflow-hidden whitespace-nowrap rounded-full px-3 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.14em] transition-colors duration-300 md:px-4",
-              i === index ? "bg-fg/10 text-fg" : "text-fg-dim hover:text-fg"
+              "relative overflow-hidden whitespace-nowrap px-2.5 py-2 text-[14px] leading-tight tracking-[-0.01em] transition-colors duration-300 md:px-3",
+              i === index ? "bg-bg-1 text-fg" : "bg-black/25 text-white hover:bg-black/45"
             )}
           >
-            <span className="tabular-nums text-warm-soft">0{i + 1}</span> <span className="hidden sm:inline">{s.label}</span>
+            <span className="tabular-nums opacity-70">0{i + 1}</span> {s.label}
             {i === index && !paused && inView && (
               <span
                 aria-hidden
                 key={`p-${index}`}
-                className="absolute inset-x-3 bottom-0.5 h-px origin-left animate-[progress_6.5s_linear_forwards] bg-accent/70"
+                className="absolute inset-x-0 bottom-0 h-[2px] origin-left animate-[progress_6.5s_linear_forwards] bg-accent motion-reduce:hidden"
               />
             )}
           </button>

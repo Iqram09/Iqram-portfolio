@@ -41,14 +41,15 @@ type Props = {
   onStage?: (stage: Stage) => void;
   autoplay?: boolean;
   className?: string;
-  compact?: boolean;
+  /** Height classes for the transcript. */
+  bodyHeight?: string;
 };
 
 /**
  * Replays the recorded README run of the Kong agent with a soft stream effect.
  * Frontend only: nothing is queried. Reduced-motion users get the full transcript at once.
  */
-export default function AgentConsole({ onStage, autoplay = true, className = "", compact = false }: Props) {
+export default function AgentConsole({ onStage, autoplay = true, className = "", bodyHeight = "h-[380px] md:h-[460px]" }: Props) {
   const script = useMemo(buildScript, []);
   const [count, setCount] = useState(0);
   const [playing, setPlaying] = useState(false);
@@ -132,14 +133,15 @@ export default function AgentConsole({ onStage, autoplay = true, className = "",
     <div ref={rootRef} className={className}>
       <Window
         title="iqram@kong-diag:~"
+        className="!border-term"
         meta={
           <button
             type="button"
             onClick={play}
-            className="inline-flex items-center gap-1.5 rounded border border-line bg-bg-2 px-2 py-1 font-mono text-[11px] text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
+            className="inline-flex items-center gap-1.5 rounded-md border border-line-strong px-2.5 py-1 text-[13px] text-fg transition-colors hover:border-fg hover:bg-fg hover:text-bg"
             aria-label={started ? "Replay the recorded run" : "Play the recorded run"}
           >
-            {started ? <Refresh size={12} /> : <Play size={12} />}
+            {started ? <Refresh size={13} /> : <Play size={13} />}
             {started ? "replay" : "play"}
           </button>
         }
@@ -147,15 +149,16 @@ export default function AgentConsole({ onStage, autoplay = true, className = "",
         <div
           ref={bodyRef}
           data-lenis-prevent
-          className={`overflow-y-auto px-4 py-4 font-mono text-[12px] leading-[1.7] text-fg-muted sm:px-5 ${
-            compact ? "h-[320px]" : "h-[340px] md:h-[460px]"
-          }`}
+          tabIndex={0}
+          role="log"
+          aria-label="Recorded agent run"
+          className={`on-dark overflow-y-auto bg-term px-4 py-4 font-mono text-[12.5px] leading-[1.7] text-term-muted [color-scheme:dark] focus-visible:-outline-offset-4 sm:px-5 ${bodyHeight}`}
           aria-live="polite"
           aria-atomic="false"
         >
           {!started && (
-            <p className="text-fg-dim">
-              <span className="text-accent">$</span> press play to replay the recorded run
+            <p className="text-term-dim">
+              <span className="text-term-accent">$</span> press play to replay the recorded run
             </p>
           )}
           {visible.map((l, i) => {
@@ -163,64 +166,62 @@ export default function AgentConsole({ onStage, autoplay = true, className = "",
             switch (l.kind) {
               case "prompt":
                 return (
-                  <p key={i} className="text-fg">
-                    <span className="text-accent">$</span> {l.text}
+                  <p key={i} className="text-term-fg">
+                    <span className="text-term-accent">$</span> {l.text}
                   </p>
                 );
               case "meta":
                 return l.text ? (
-                  <p key={i} className="text-fg-dim">
+                  <p key={i} className="text-term-dim">
                     {l.text}
                   </p>
                 ) : null;
               case "step":
                 return (
-                  <p key={i} className="mt-3 text-fg">
-                    <span className="text-violet">●</span> {l.text}
+                  <p key={i} className="mt-3 text-term-fg">
+                    <span className="text-term-violet">●</span> {l.text}
                   </p>
                 );
               case "call":
                 return (
-                  <p key={i} className="pl-4 text-accent">
+                  <p key={i} className="pl-4 text-term-accent">
                     {l.text}
                   </p>
                 );
               case "result":
                 return (
-                  <p key={i} className="pl-8 text-fg-muted">
-                    <span className="text-ok">✓</span> {l.text}
+                  <p key={i} className="pl-8 text-term-muted">
+                    <span className="text-term-ok">✓</span> {l.text}
                   </p>
                 );
               case "finding":
                 return (
                   <p key={i} className="pl-8">
-                    <span className="rounded border border-warn/40 bg-warn/10 px-1.5 py-0.5 text-[11px] text-warn">{l.text}</span>
+                    <span className="rounded border border-term-warn/40 bg-term-warn/10 px-1.5 py-0.5 text-[12px] text-term-warn">{l.text}</span>
                   </p>
                 );
               case "heading":
                 return (
-                  <p key={i} className="mt-4 text-[11px] tracking-[0.16em] text-fg-dim">
+                  <p key={i} className="mt-4 text-[12px] tracking-[0.12em] text-term-dim">
                     {l.text}
                   </p>
                 );
               case "prose":
                 return (
-                  <p key={i} className={`mt-1.5 max-w-prose text-pretty text-fg ${last ? "caret" : ""}`}>
+                  <p key={i} className={`mt-1.5 max-w-prose text-pretty text-term-fg ${last ? "caret" : ""}`}>
                     {l.text}
                   </p>
                 );
               case "metric":
                 return (
-                  <p key={i} className="whitespace-pre text-fg-muted">
-                    <span className="text-fg-dim">{l.text.slice(0, 16)}</span>
+                  <p key={i} className="whitespace-pre text-term-muted">
+                    <span className="text-term-dim">{l.text.slice(0, 16)}</span>
                     {l.text.slice(16)}
                   </p>
                 );
             }
           })}
-          {playing && count < script.length && (
-            <p className="mt-1 text-fg-dim caret" aria-hidden />
-          )}
+          {playing && count < script.length && <p className="caret mt-1 text-term-dim" aria-hidden />}
         </div>
       </Window>
     </div>

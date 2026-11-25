@@ -3,8 +3,10 @@ import {
   ArrowDown as LArrowDown,
   ArrowLeft as LArrowLeft,
   ArrowRight as LArrowRight,
+  ArrowUp as LArrowUp,
   ArrowUpRight as LArrowUpRight,
   Check as LCheck,
+  ChevronRight as LChevronRight,
   Download as LDownload,
   FileText as LFileText,
   Mail as LMail,
@@ -12,6 +14,7 @@ import {
   Menu as LMenu,
   Phone as LPhone,
   Play as LPlay,
+  Plus as LPlus,
   RotateCcw as LRotateCcw,
   ShieldCheck as LShieldCheck,
   Terminal as LTerminal,
@@ -31,6 +34,9 @@ export function ArrowRight(p: IconProps) { return <LArrowRight size={16} {...def
 export function ArrowLeft(p: IconProps) { return <LArrowLeft size={16} {...defaults} {...p} />; }
 export function ArrowUpRight(p: IconProps) { return <LArrowUpRight size={16} {...defaults} {...p} />; }
 export function ArrowDown(p: IconProps) { return <LArrowDown size={16} {...defaults} {...p} />; }
+export function ArrowUp(p: IconProps) { return <LArrowUp size={16} {...defaults} {...p} />; }
+export function ChevronRight(p: IconProps) { return <LChevronRight size={16} {...defaults} {...p} />; }
+export function Plus(p: IconProps) { return <LPlus size={16} {...defaults} {...p} />; }
 export function Download(p: IconProps) { return <LDownload size={16} {...defaults} {...p} />; }
 export function FileText(p: IconProps) { return <LFileText size={16} {...defaults} {...p} />; }
 export function Mail(p: IconProps) { return <LMail size={16} {...defaults} {...p} />; }

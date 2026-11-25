@@ -9,97 +9,94 @@ module.exports = {
   theme: {
     extend: {
       /*
-       * "Distant Glass". Token names are kept from the previous system so the
-       * case study and résumé pages inherit the new palette unchanged.
-       * Text tokens clear WCAG AA on bg and night:
-       *   fg #D9CFC9 13.9:1 · muted #9E9FB3 7.9:1 · dim #7A7B8F 5.0:1
+       * "Letterform" — a light editorial system: neutral paper, near-black
+       * bands, a condensed display serif, and colour that comes from the work
+       * itself (the jersey, Kong's blue, Proximo's camel wall, Stans' dusk).
+       * Text tokens clear WCAG AA on paper, white, mist and stone:
+       *   fg #161616 15:1 · muted #54544F 6.3:1 · dim #696965 4.6:1
        */
       colors: {
-        // Warm black ground and three lifted surfaces.
+        // Grounds, light.
         bg: {
-          DEFAULT: "#050200",
-          1: "#0A0807",
-          2: "#100D0C",
-          3: "#171312",
+          DEFAULT: "#F1F1F0",
+          1: "#FFFFFF",
+          2: "#F7F7F6",
+          3: "#E4E4E1",
         },
-        // Navy-black ground for the "system" sections.
+        stone: "#EBEAE4",
+        // Grounds, dark bands.
         night: {
-          DEFAULT: "#020309",
-          1: "#060914",
-          2: "#0B1020",
+          DEFAULT: "#0E0E0E",
+          1: "#181818",
+          2: "#262626",
         },
-        // Glass tint — always used with alpha.
-        glass: "#26324D",
         line: {
-          DEFAULT: "#221E20",
-          strong: "#35303A",
+          DEFAULT: "#DCDCD8",
+          strong: "#B9B9B4",
         },
+        // Text on light.
         fg: {
-          DEFAULT: "#D9CFC9",
-          muted: "#9E9FB3",
-          dim: "#7A7B8F",
+          DEFAULT: "#161616",
+          muted: "#54544F",
+          dim: "#696965",
         },
-        // Glacier blue — the light inside the glass.
+        // Text on dark.
+        inv: {
+          DEFAULT: "#F5F5F3",
+          muted: "#B4B4B0",
+          dim: "#8C8C88",
+        },
+        // Maroon, from the jersey — the one interface accent.
         accent: {
-          DEFAULT: "#9CC3F0",
-          soft: "#C6DCF7",
-          deep: "#6F9BD6",
+          DEFAULT: "#7F1330",
+          soft: "#F2C9C4",
         },
-        // Warm accent — hairlines and fills; `soft` for text (5.6:1).
-        warm: {
-          DEFAULT: "#845C40",
-          soft: "#C49A76",
+        // Panel grounds, sampled from the projects.
+        cobalt: "#1F3FBF",
+        camel: "#C69A66",
+        leaf: "#1F6B4A",
+        sky: "#BFD5EE",
+        dusk: "#2D3E53",
+        // Status + syntax on light.
+        violet: "#5238A8",
+        ok: "#1B6B49",
+        warn: "#855300",
+        err: "#B02A1C",
+        // Terminal windows stay dark on the light page.
+        term: {
+          DEFAULT: "#141416",
+          fg: "#ECEAE6",
+          muted: "#B0AEA9",
+          dim: "#8A8883",
+          accent: "#9DBBFF",
+          ok: "#86D8AE",
+          warn: "#EBC074",
+          violet: "#C0B0FA",
+          err: "#F29C8B",
         },
-        mint: "#BDE7D9",
-        lavender: "#C9B8FF",
-        violet: "#B8A9F0",
-        ok: "#8ED9BE",
-        warn: "#E3B873",
-        err: "#E8907F",
       },
       fontFamily: {
         sans: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        display: ["var(--font-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Didot", "Georgia", "serif"],
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       },
       maxWidth: {
-        site: "1320px",
+        site: "1280px",
         prose: "720px",
       },
       letterSpacing: {
-        tightest: "-0.045em",
-        hud: "0.22em",
+        tightest: "-0.04em",
+        snug: "-0.015em",
+        caps: "0.04em",
       },
       transitionTimingFunction: {
         "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       keyframes: {
-        "fade-up": {
-          "0%": { opacity: "0", transform: "translateY(14px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+        progress: {
+          from: { transform: "scaleX(0)" },
+          to: { transform: "scaleX(1)" },
         },
-        "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        flow: {
-          to: { strokeDashoffset: "-24" },
-        },
-        "pulse-dot": {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.35" },
-        },
-        caret: {
-          "0%, 49%": { opacity: "1" },
-          "50%, 100%": { opacity: "0" },
-        },
-      },
-      animation: {
-        "fade-up": "fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both",
-        "fade-in": "fade-in 0.8s ease-out both",
-        flow: "flow 1.6s linear infinite",
-        "pulse-dot": "pulse-dot 2.4s ease-in-out infinite",
-        caret: "caret 1.1s steps(1) infinite",
       },
     },
   },

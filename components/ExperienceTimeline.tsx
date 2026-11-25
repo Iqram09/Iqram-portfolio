@@ -1,136 +1,86 @@
-"use client";
-
-import { useRef } from "react";
 import { experience } from "@/data/experience";
-import SceneHeader from "@/components/home/SceneHeader";
+import SectionHead from "@/components/ui/SectionHead";
 import Reveal from "@/components/ui/Reveal";
+import { Dot, DotList } from "@/components/ui/Bits";
 import { ArrowUpRight } from "@/components/ui/Icons";
-import { useGsap } from "@/lib/useGsap";
 import { cn } from "@/lib/cn";
 
-/**
- * Scene 06. A spine draws itself down the timeline as it scrolls past
- * (Sky Digital Lab's GSAP pattern); each role's marker lights as the line
- * reaches it.
- */
+/* Newest to oldest, each card set a step lower than the last. */
+const steps = ["", "lg:mt-20", "lg:mt-40"];
+
 export default function ExperienceTimeline() {
-  const root = useRef<HTMLElement>(null);
-
-  useGsap(root, ({ gsap }, el) => {
-    const line = el.querySelector("[data-spine]");
-    if (line) {
-      gsap.fromTo(
-        line,
-        { scaleY: 0 },
-        {
-          scaleY: 1,
-          ease: "none",
-          transformOrigin: "top center",
-          scrollTrigger: { trigger: "[data-timeline]", start: "top 70%", end: "bottom 60%", scrub: 0.6 },
-        }
-      );
-    }
-    gsap.utils.toArray<HTMLElement>("[data-node]", el).forEach((node) => {
-      gsap.fromTo(
-        node,
-        { backgroundColor: "rgba(53,48,58,1)", boxShadow: "0 0 0 0 rgba(196,154,118,0)" },
-        {
-          backgroundColor: "rgba(196,154,118,1)",
-          boxShadow: "0 0 0 6px rgba(196,154,118,0.14)",
-          duration: 0.6,
-          scrollTrigger: { trigger: node, start: "top 62%", toggleActions: "play none none reverse" },
-        }
-      );
-    });
-  });
-
   return (
-    <section ref={root} id="experience" className="relative bg-bg py-28 md:py-40" aria-labelledby="exp-title">
+    <section id="experience" className="bg-bg py-24 md:py-36" aria-labelledby="exp-title">
       <div className="container-site">
-        <SceneHeader
-          index="06"
-          label="Experience"
+        <SectionHead
+          eyebrow="Experience"
           id="exp-title"
-          title="Where I've built"
+          title="Where I’ve built"
           lede="3+ years of full-stack delivery and enterprise API integration in Mumbai — now freelancing."
         />
 
-        <ol data-timeline className="relative mt-16 md:mt-24">
-          <span aria-hidden className="absolute bottom-0 left-[5px] top-2 w-px bg-line md:left-[calc(25%+5px)]" />
-          <span aria-hidden data-spine className="absolute bottom-0 left-[5px] top-2 w-px origin-top bg-gradient-to-b from-warm-soft via-warm to-accent/60 md:left-[calc(25%+5px)]" />
-
-          {experience.map((e, i) => (
-            <li key={`${e.company}-${e.start}`} className={cn("relative grid gap-6 pb-20 pl-10 md:grid-cols-4 md:gap-10 md:pl-0", i === experience.length - 1 && "pb-2")}>
-              <span
-                aria-hidden
-                data-node
-                className="absolute left-0 top-2 h-[11px] w-[11px] rounded-full bg-warm-soft md:left-[25%]"
-              />
-
-              {/* Period */}
-              <Reveal className="md:pr-10 md:text-right">
-                <p className="font-mono text-sm tabular-nums text-fg">
-                  {e.start} — {e.end}
-                </p>
-                <p className="hud mt-2">{e.location}</p>
-                {e.current && (
-                  <p className="hud mt-3 inline-flex items-center gap-2 text-ok">
-                    <span className="h-1.5 w-1.5 rounded-full bg-ok" aria-hidden /> Current
+        <ol className="mt-14 grid items-start gap-5 md:mt-20 lg:grid-cols-3">
+          {experience.map((e, i) => {
+            const on = Boolean(e.current);
+            return (
+              <Reveal
+                as="li"
+                key={`${e.company}-${e.start}`}
+                delay={i * 110}
+                y={48}
+                className={cn("rounded-[18px] p-6 md:p-8", on ? "on-dark bg-accent text-white" : "bg-bg-1", steps[i])}
+              >
+                <div className="flex items-center justify-between gap-4 text-[16px] tracking-[-0.01em]">
+                  <p className="tabular-nums">
+                    {e.start} — {e.end}
                   </p>
-                )}
-              </Reveal>
+                  {on ? (
+                    <p className="inline-flex items-center gap-2">
+                      <Dot pulse tone="soft" /> Current
+                    </p>
+                  ) : null}
+                </div>
 
-              {/* Role */}
-              <div className="md:col-span-3 md:pl-12">
-                <Reveal>
-                  <h3 className="display text-[clamp(1.9rem,3.2vw,3rem)] text-fg">{e.role}</h3>
-                  <p className="mt-2 text-lg text-fg-muted">{e.company}</p>
-                </Reveal>
+                <h3 className="display mt-7 text-[clamp(2.3rem,3.1vw,2.9rem)] leading-[0.98]">{e.role}</h3>
+                <p className={cn("dots mt-3 text-[17px] tracking-[-0.015em]", on ? "text-white/80" : "text-fg-dim")}>
+                  <span className={on ? "text-white" : "text-fg"}>{e.company}</span>
+                  <span>{e.location}</span>
+                </p>
 
-                <Reveal delay={100} className="mt-8 grid gap-10 lg:grid-cols-5">
-                  <div className="lg:col-span-3">
-                    {e.clients ? (
-                      <ul className="flex flex-col divide-y divide-line border-y border-line">
-                        {e.clients.map((c) => (
-                          <li key={c.name} className="py-5">
-                            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                              <span className="font-medium text-fg">{c.name}</span>
-                              <a
-                                href={c.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 font-mono text-[11px] text-fg-muted transition-colors hover:text-fg"
-                              >
-                                {c.domain} <ArrowUpRight size={11} />
-                              </a>
-                            </div>
-                            <p className="hud mt-1">{c.sector}</p>
-                            <p className="mt-3 text-pretty text-[15px] leading-relaxed text-fg-muted">{c.summary}</p>
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <ul className="flex flex-col gap-4 text-pretty text-[15px] leading-relaxed text-fg-muted">
-                        {e.summary.map((s) => (
-                          <li key={s} className="flex gap-4">
-                            <span aria-hidden className="mt-[0.7em] h-px w-4 shrink-0 bg-warm" />
-                            <span>{s}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                  <ul className="flex flex-wrap content-start gap-x-4 gap-y-2 lg:col-span-2" aria-label="Technologies">
-                    {e.technologies.map((t) => (
-                      <li key={t} className="hud text-fg-muted">
-                        {t}
+                {e.clients ? (
+                  <ul className="mt-8">
+                    {e.clients.map((c) => (
+                      <li key={c.name} className="border-t border-white/25 py-5">
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-4">
+                          <span className="text-[19px] font-medium tracking-[-0.02em]">{c.name}</span>
+                          <a
+                            href={c.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[15px] text-white/85 underline decoration-white/35 underline-offset-4 transition-colors hover:text-white hover:decoration-white"
+                          >
+                            {c.domain} <ArrowUpRight size={13} />
+                          </a>
+                        </div>
+                        <p className="mt-0.5 text-[15px] text-white/75">{c.sector}</p>
+                        <p className="mt-3 text-pretty text-[16px] leading-[1.5] text-white/90">{c.summary}</p>
                       </li>
                     ))}
                   </ul>
-                </Reveal>
-              </div>
-            </li>
-          ))}
+                ) : (
+                  <ul className="mt-8">
+                    {e.summary.map((s) => (
+                      <li key={s} className="border-t border-line py-4 text-pretty text-[16px] leading-[1.5] text-fg-muted">
+                        {s}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <DotList items={e.technologies} label="Technologies" tone={on ? "onAccent" : "dim"} className={cn("mt-4 border-t pt-5", on ? "border-white/25" : "border-line")} />
+              </Reveal>
+            );
+          })}
         </ol>
       </div>
     </section>
